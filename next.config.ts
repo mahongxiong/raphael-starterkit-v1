@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
     appIsrStatus: false,
   },
   
+  images: {
+      remotePatterns: [
+        {
+          protocol: "https",
+          hostname: "*.grsai.com",
+          pathname: "/**",
+        },
+      ],
+    },
+
   // Configure webpack to ignore the external folder
   webpack: (config: any) => {
     config.watchOptions = {

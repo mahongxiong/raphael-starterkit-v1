@@ -1,10 +1,11 @@
--- Migration script to merge ChineseName.club data structure with Starter Kit
--- This script handles the transition from user_credits/credit_transactions to customers/credits_history
+-- =========================
+-- ChineseName.club -> Starter Kit Migration Script
+-- =========================
 
--- Step 1: Create temporary tables if they exist in the old ChineseName database
--- Note: These CREATE statements will fail silently if tables don't exist
+-- Step 0: 确保 UUID 扩展可用
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
--- Create user_credits table structure (in case it needs to be recreated)
+-- Step 1: 创建旧表（如果不存在）
 CREATE TABLE IF NOT EXISTS public.user_credits (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
@@ -14,7 +15,6 @@ CREATE TABLE IF NOT EXISTS public.user_credits (
     updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Create credit_transactions table structure (in case it needs to be recreated)
 CREATE TABLE IF NOT EXISTS public.credit_transactions (
     id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
@@ -25,55 +25,65 @@ CREATE TABLE IF NOT EXISTS public.credit_transactions (
     created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
--- Step 2: Create a function to safely migrate user credits data
+-- Step 2: 确保 customers.user_id 唯一
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1
+        FROM pg_constraint
+        WHERE conname = 'customers_user_id_unique'
+    ) THEN
+        ALTER TABLE public.customers
+        ADD CONSTRAINT customers_user_id_unique UNIQUE (user_id);
+    END IF;
+END
+$$;
+
+-- Step 3: 创建迁移函数
 CREATE OR REPLACE FUNCTION migrate_chinesename_credits()
 RETURNS void AS $$
 BEGIN
-    -- Check if user_credits table exists and has data
+    -- 3.1 迁移 user_credits -> customers
     IF EXISTS (
-        SELECT 1 FROM information_schema.tables 
-        WHERE table_schema = 'public' 
-        AND table_name = 'user_credits'
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema='public' AND table_name='user_credits'
     ) THEN
-        -- Migrate user_credits to customers table
         INSERT INTO public.customers (
-            user_id, 
-            email, 
-            credits, 
+            user_id,
+            email,
+            credits,
             creem_customer_id,
-            created_at, 
+            created_at,
             updated_at,
             metadata
         )
-        SELECT 
+        SELECT
             uc.user_id,
             COALESCE(au.email, 'unknown@example.com'),
             COALESCE(uc.remaining_credits, 0),
-            'migrated_' || uc.user_id::text, -- Temporary creem_customer_id
+            'migrated_' || uc.user_id::text,
             uc.created_at,
             uc.updated_at,
             jsonb_build_object(
-                'migrated_from', 'chinesename',
+                'migrated_from','chinesename',
                 'original_total_credits', uc.total_credits,
                 'migration_date', now()
             )
         FROM user_credits uc
         LEFT JOIN auth.users au ON uc.user_id = au.id
-        ON CONFLICT (user_id) DO UPDATE SET
-            credits = EXCLUDED.credits,
+        ON CONFLICT (user_id) DO UPDATE
+        SET credits = EXCLUDED.credits,
             updated_at = EXCLUDED.updated_at,
             metadata = customers.metadata || EXCLUDED.metadata;
 
         RAISE NOTICE 'Migrated % user credit records', (SELECT COUNT(*) FROM user_credits);
     END IF;
 
-    -- Check if credit_transactions table exists and has data
+    -- 3.2 迁移 credit_transactions -> credits_history
     IF EXISTS (
-        SELECT 1 FROM information_schema.tables 
-        WHERE table_schema = 'public' 
-        AND table_name = 'credit_transactions'
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema='public' AND table_name='credit_transactions'
     ) THEN
-        -- Migrate credit_transactions to credits_history
         INSERT INTO public.credits_history (
             customer_id,
             amount,
@@ -82,17 +92,14 @@ BEGIN
             created_at,
             metadata
         )
-        SELECT 
+        SELECT
             c.id,
             ABS(ct.amount),
-            CASE 
-                WHEN ct.amount < 0 OR ct.transaction_type = 'spend' THEN 'subtract'
-                ELSE 'add'
-            END,
-            COALESCE(ct.operation, 'migrated_transaction'),
+            CASE WHEN ct.amount<0 OR ct.transaction_type='spend' THEN 'subtract' ELSE 'add' END,
+            COALESCE(ct.operation,'migrated_transaction'),
             ct.created_at,
             jsonb_build_object(
-                'migrated_from', 'chinesename',
+                'migrated_from','chinesename',
                 'original_transaction_type', ct.transaction_type,
                 'original_amount', ct.amount,
                 'remaining_credits_at_time', ct.remaining_credits
@@ -106,66 +113,66 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Step 3: Execute the migration
+-- Step 4: 执行迁移
 SELECT migrate_chinesename_credits();
 
--- Step 4: Create indexes for performance (if they don't already exist)
+-- Step 5: 创建索引
 CREATE INDEX IF NOT EXISTS user_credits_user_id_idx ON public.user_credits(user_id);
 CREATE INDEX IF NOT EXISTS credit_transactions_user_id_idx ON public.credit_transactions(user_id);
 CREATE INDEX IF NOT EXISTS credit_transactions_created_at_idx ON public.credit_transactions(created_at);
 
--- Step 5: Add a flag to track migration status
-ALTER TABLE public.customers 
+-- Step 6: 添加 migration_status 并更新已迁移记录
+ALTER TABLE public.customers
 ADD COLUMN IF NOT EXISTS migration_status text DEFAULT 'native';
 
--- Update migrated records
-UPDATE public.customers 
-SET migration_status = 'migrated_from_chinesename' 
+UPDATE public.customers
+SET migration_status = 'migrated_from_chinesename'
 WHERE creem_customer_id LIKE 'migrated_%';
 
--- Step 6: Create a view for backward compatibility (optional)
+-- Step 7: 创建向后兼容视图
 CREATE OR REPLACE VIEW public.user_credits_compat AS
-SELECT 
-    gen_random_uuid() as id,
+SELECT
+    gen_random_uuid() AS id,
     user_id,
-    credits as total_credits,
-    credits as remaining_credits,
+    credits AS total_credits,
+    credits AS remaining_credits,
     created_at,
     updated_at
 FROM public.customers
 WHERE migration_status = 'migrated_from_chinesename';
 
--- Step 7: Grant necessary permissions
+-- Step 8: 授权
 GRANT SELECT ON public.user_credits_compat TO authenticated;
 GRANT ALL ON public.user_credits TO service_role;
 GRANT ALL ON public.credit_transactions TO service_role;
 
--- Step 8: Add RLS policies for migrated tables
+-- Step 9: 启用 RLS 并创建策略（幂等）
 ALTER TABLE public.user_credits ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.credit_transactions ENABLE ROW LEVEL SECURITY;
 
--- Policies for user_credits
-CREATE POLICY IF NOT EXISTS "Users can view their own credits" 
-ON public.user_credits FOR SELECT 
+-- user_credits policies
+DROP POLICY IF EXISTS "Users can view their own credits" ON public.user_credits;
+CREATE POLICY "Users can view their own credits"
+ON public.user_credits FOR SELECT
 USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Service role can manage user credits" 
-ON public.user_credits FOR ALL 
+DROP POLICY IF EXISTS "Service role can manage user credits" ON public.user_credits;
+CREATE POLICY "Service role can manage user credits"
+ON public.user_credits FOR ALL
 USING (auth.role() = 'service_role');
 
--- Policies for credit_transactions
-CREATE POLICY IF NOT EXISTS "Users can view their own transactions" 
-ON public.credit_transactions FOR SELECT 
+-- credit_transactions policies
+DROP POLICY IF EXISTS "Users can view their own transactions" ON public.credit_transactions;
+CREATE POLICY "Users can view their own transactions"
+ON public.credit_transactions FOR SELECT
 USING (auth.uid() = user_id);
 
-CREATE POLICY IF NOT EXISTS "Service role can manage credit transactions" 
-ON public.credit_transactions FOR ALL 
+DROP POLICY IF EXISTS "Service role can manage credit transactions" ON public.credit_transactions;
+CREATE POLICY "Service role can manage credit transactions"
+ON public.credit_transactions FOR ALL
 USING (auth.role() = 'service_role');
 
--- Step 9: Clean up function (optional - remove after successful migration)
--- DROP FUNCTION IF EXISTS migrate_chinesename_credits();
-
--- Success message
+-- Step 10: 完成通知
 DO $$
 BEGIN
     RAISE NOTICE 'ChineseName.club data migration completed successfully!';
