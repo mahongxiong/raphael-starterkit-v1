@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     let imageUrl = null;
     let status = '';
     let results = null;
-    let maxTries = 20;
+    let maxTries = 2000;
     let tries = 0;
     while (tries < maxTries) {
       console.log(`[DEBUG] 第 ${tries + 1} 次轮询任务结果`);

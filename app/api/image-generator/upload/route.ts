@@ -49,9 +49,13 @@ export async function POST(request: NextRequest) {
       })
     );
 
-    // Return proxied URL so it is publicly accessible via our domain
-    const proxyUrl = `/api/r2/${encodeURIComponent(key)}`;
-    return NextResponse.json({ success: true, url: proxyUrl });
+    // 返回公共访问 URL（需将 R2 Bucket 配置为 Public Read 或开启公共开发 URL）
+    const publicHost = process.env.CF_R2_PUBLIC_HOST as string;
+    if (!publicHost) {
+      return NextResponse.json({ error: 'Missing CF_R2_PUBLIC_HOST for public URL' }, { status: 500 });
+    }
+    const publicUrl = `https://${publicHost}/${encodeURIComponent(key)}`;
+    return NextResponse.json({ success: true, url: publicUrl });
   } catch (error) {
     console.error('[upload] Error:', error);
     return NextResponse.json({ error: 'Failed to upload' }, { status: 500 });

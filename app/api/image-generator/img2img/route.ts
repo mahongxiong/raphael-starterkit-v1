@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
     // Poll for result
     const resultUrl = `${apiBase}/v1/draw/result`;
-    const maxTries = 20;
+    const maxTries = 2000;
     const delayMs = 1500;
     let imageUrl: string | null = null;
     let lastStatus: any = null;

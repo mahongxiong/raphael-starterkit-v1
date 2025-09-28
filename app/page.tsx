@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/use-user";
@@ -10,6 +10,13 @@ import NameGeneratorForm from "@/components/product/generator/name-generator-for
 import ChineseNamePricing from "@/components/product/pricing/chinese-name-pricing";
 import PopularNames from "@/components/product/popular/popular-names";
 import { saveFormData, loadFormData } from "@/utils/form-storage";
+// 新增：Image Editor 依赖
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import Image from "next/image";
+import { Loader2, Image as ImageIcon } from "lucide-react";
 
 interface NameData {
   chinese: string;
@@ -94,10 +101,10 @@ export default function Home() {
 
       if (!response.ok) {
         // Handle rate limiting specifically
-        if (response.status === 429 && data.rateLimited) {
+        if (response.status === 429 && (data as any).rateLimited) {
           toast({
             title: "Daily limit reached",
-            description: data.error || "You can generate 3 free names per day. Please sign in for unlimited access!",
+            description: (data as any).error || "You can generate 3 free names per day. Please sign in for unlimited access!",
           });
           // Show sign-in option
           setTimeout(() => {
@@ -105,20 +112,20 @@ export default function Home() {
           }, 3000);
           return;
         }
-        throw new Error(data.error || 'Failed to generate names');
+        throw new Error((data as any).error || 'Failed to generate names');
       }
 
       // Calculate total rounds based on generation round
-      const estimatedTotalRounds = data.isContinuation 
-        ? Math.ceil(data.batch.totalNamesGenerated / 6)
-        : data.generationRound;
+      const estimatedTotalRounds = (data as any).isContinuation 
+        ? Math.ceil((data as any).batch.totalNamesGenerated / 6)
+        : (data as any).generationRound;
 
       // Save results to sessionStorage and redirect to results page
       const sessionData = {
-        names: data.names,
+        names: (data as any).names,
         formData: formData,
-        batch: data.batch,
-        generationRound: data.generationRound,
+        batch: (data as any).batch,
+        generationRound: (data as any).generationRound,
         totalGenerationRounds: estimatedTotalRounds,
         isHistoryMode: false,
       };
@@ -141,8 +148,8 @@ export default function Home() {
       });
 
       toast({
-        title: data.message || "Names generated successfully!",
-        description: `Generated ${data.names.length} unique Chinese names${data.creditsUsed ? ` using ${data.creditsUsed} credits` : ' for free'}`,
+        title: (data as any).message || "Names generated successfully!",
+        description: `Generated ${(data as any).names.length} unique Chinese names${(data as any).creditsUsed ? ` using ${(data as any).creditsUsed} credits` : ' for free'}`,
       });
       
       // Navigate to results page
@@ -165,8 +172,66 @@ export default function Home() {
   const scrollToForm = () => {
     const formSection = document.querySelector('[data-name-generator-form]');
     if (formSection) {
-      formSection.scrollIntoView({ behavior: 'smooth' });
+      (formSection as HTMLElement).scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  // ===== Image Editor 状态与逻辑（移入组件内部） =====
+  const [imagePrompt, setImagePrompt] = useState("");
+  const [isImageGenerating, setIsImageGenerating] = useState(false);
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+
+  const [img2imgPrompt, setImg2imgPrompt] = useState("");
+  const [img2imgUrl, setImg2imgUrl] = useState<string | null>(null);
+  const [isImg2ImgGenerating, setIsImg2ImgGenerating] = useState(false);
+  const [imgFilePreview, setImgFilePreview] = useState<string | null>(null);
+  const [imgWebHook, setImgWebHook] = useState<string>("");
+  const [imgShutProgress, setImgShutProgress] = useState<boolean>(false);
+
+  const handleGenerateImage = async () => {
+    if (!imagePrompt.trim()) {
+      toast({
+        title: "Prompt cannot be empty",
+        description: "Please enter a description to generate the image",
+        variant: "destructive",
+      });
+      return;
+    }
+  
+    setIsImageGenerating(true);
+    try {
+      const response = await fetch("/api/image-generator/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: imagePrompt }),
+      });
+      const data = await response.json();
+      if (response.ok && (data as any).success && (data as any).image) {
+        setGeneratedImageUrl((data as any).image);
+      } else {
+        throw new Error((data as any).error || "Failed to generate image");
+      }
+    } catch (error) {
+      console.error("Error generating image:", error);
+      toast({
+        title: "Generation failed",
+        description: "An error occurred during image generation, please try again later",
+        variant: "destructive",
+      });
+    } finally {
+      setIsImageGenerating(false);
+    }
+  };
+  
+  const handleDownload = () => {
+    if (!generatedImageUrl) return;
+    const link = document.createElement("a");
+    link.href = generatedImageUrl;
+    link.download = `generated-image-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -263,29 +328,197 @@ export default function Home() {
               </div>
 
               <div id="name-generator-form" data-name-generator-form>
-                <NameGeneratorForm 
-                  onGenerate={handleGenerate}
-                  isGenerating={isGenerating}
-                  hasTriedFree={hasTriedFree}
-                  savedFormData={savedFormData}
-                />
-                
-                {/* Personal Center Button for authenticated users */}
-                {user && (
+                {/* 替换为 Image Editor 内容 */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* 左侧：编辑器输入区域 */}
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: 0.2 }}
-                    className="text-center mt-6"
+                    transition={{ duration: 0.5 }}
                   >
-                    <button
-                      onClick={() => router.push('/profile')}
-                      className="inline-flex items-center gap-2 px-6 py-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors border border-primary/20 hover:border-primary/40 rounded-lg"
-                    >
-                      👤 Profile - View History & Saved Names
-                    </button>
+                    <Card className="overflow-hidden">
+                      <CardContent className="p-6">
+                        <div className="space-y-4">
+                          <div className="mb-4">
+                            <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
+                              <ImageIcon className="h-5 w-5 text-primary" />
+                              Image Generation
+                            </h2>
+                            <p className="text-sm text-muted-foreground mb-4">
+                              Switch between Text-to-Image and Image-to-Image
+                            </p>
+                          </div>
+
+                          <Tabs defaultValue="t2i">
+                            <TabsList>
+                              <TabsTrigger value="t2i">Text-to-Image</TabsTrigger>
+                              <TabsTrigger value="i2i">Image-to-Image</TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent value="t2i" className="space-y-4">
+                              <Textarea
+                                placeholder="e.g. A cute cat sitting on a windowsill with sunlight, blue sky and white clouds in the background"
+                                className="min-h-[150px] resize-none"
+                                value={imagePrompt}
+                                onChange={(e) => setImagePrompt(e.target.value)}
+                              />
+
+                              <Button
+                                onClick={handleGenerateImage}
+                                disabled={isImageGenerating || !imagePrompt.trim()}
+                                className="w-full"
+                              >
+                                {isImageGenerating ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Generating...
+                                  </>
+                                ) : (
+                                  "Generate Image"
+                                )}
+                              </Button>
+                            </TabsContent>
+
+                            <TabsContent value="i2i" className="space-y-4">
+                              <Textarea
+                                placeholder="Enter the prompt for transformation"
+                                className="min-h-[120px] resize-none"
+                                value={img2imgPrompt}
+                                onChange={(e) => setImg2imgPrompt(e.target.value)}
+                              />
+
+                              {/* Upload image */}
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={async (e) => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  const reader = new FileReader();
+                                  reader.onload = async () => {
+                                    const base64 = (reader.result as string).split(",")[1];
+                                    const uploadRes = await fetch('/api/image-generator/upload', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({
+                                        fileName: `${Date.now()}-${file.name}`,
+                                        contentType: file.type,
+                                        data: base64,
+                                      }),
+                                    });
+                                    const uploadData = await uploadRes.json();
+                                    if (uploadRes.ok && uploadData.url) {
+                                      setImgFilePreview(uploadData.url);
+                                      setImg2imgUrl(uploadData.url);
+                                    } else {
+                                      toast({
+                                        title: 'Upload failed',
+                                        description: uploadData.error || 'Unable to upload image',
+                                        variant: 'destructive',
+                                      });
+                                    }
+                                  };
+                                  reader.readAsDataURL(file);
+                                }}
+                              />
+
+                              {imgFilePreview && (
+                                <div className="relative w-full h-48">
+                                  <Image src={imgFilePreview} alt="Upload preview" fill className="object-contain" />
+                                </div>
+                              )}
+
+                              <Button
+                                onClick={async () => {
+                                  if (!img2imgPrompt.trim() || !img2imgUrl) {
+                                    toast({ title: 'Prompt and image are required', variant: 'destructive' });
+                                    return;
+                                  }
+                                  setIsImg2ImgGenerating(true);
+                                  try {
+                                    const res = await fetch('/api/image-generator/img2img', {
+                                      method: 'POST',
+                                      headers: { 'Content-Type': 'application/json' },
+                                      body: JSON.stringify({
+                                        prompt: img2imgPrompt,
+                                        urls: [img2imgUrl],
+                                        webHook: imgWebHook || undefined,
+                                        shutProgress: imgShutProgress,
+                                      }),
+                                    });
+                                    const data = await res.json();
+                                    if (res.ok && data.success && data.image) {
+                                      setGeneratedImageUrl(data.image);
+                                    } else {
+                                      toast({ title: 'Image-to-Image failed', description: data.error || 'Try again later', variant: 'destructive' });
+                                    }
+                                  } catch (err) {
+                                    toast({ title: 'Image-to-Image error', description: String(err), variant: 'destructive' });
+                                  } finally {
+                                    setIsImg2ImgGenerating(false);
+                                  }
+                                }}
+                                className="w-full"
+                                disabled={isImg2ImgGenerating}
+                              >
+                                {isImg2ImgGenerating ? (
+                                  <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    Generating...
+                                  </>
+                                ) : (
+                                  'Generate from Image'
+                                )}
+                              </Button>
+                            </TabsContent>
+                          </Tabs>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </motion.div>
-                )}
+
+                  {/* 右侧：结果展示区域 */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                  >
+                    <Card className="overflow-hidden h-full">
+                      <CardContent className="p-6 flex flex-col h-full">
+                        <div>
+                          <h2 className="text-xl font-semibold mb-2">Generated Result</h2>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            {generatedImageUrl ? "Your image has been generated" : "Image will appear here"}
+                          </p>
+                        </div>
+
+                        <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-lg overflow-hidden relative min-h-[300px]">
+                          {(isImageGenerating || isImg2ImgGenerating) ? (
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                              <p className="text-sm text-muted-foreground">Generating your image...</p>
+                            </div>
+                          ) : generatedImageUrl ? (
+                            <div className="relative w-full h-full min-h-[300px]">
+                              <Image ref={imageRef} src={generatedImageUrl} alt="Generated image" fill className="object-contain" />
+                            </div>
+                          ) : (
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <ImageIcon className="h-16 w-16 text-muted-foreground/40" />
+                              <p className="text-sm text-muted-foreground">Enter a prompt and click the generate button</p>
+                            </div>
+                          )}
+                        </div>
+
+                        {generatedImageUrl && (
+                          <Button onClick={handleDownload} className="mt-4" variant="outline">
+                            Download Image
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                </div>
               </div>
             </motion.div>
           </div>

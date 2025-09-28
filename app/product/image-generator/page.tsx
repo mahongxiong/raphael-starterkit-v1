@@ -205,24 +205,6 @@ export default function ImageGeneratorPage() {
                         </div>
                       )}
 
-                      {/* Optional: webhook and progress */}
-                      <div className="space-y-2">
-                        <input
-                          type="text"
-                          placeholder="Webhook URL (optional)"
-                          className="w-full border rounded px-3 py-2 text-sm"
-                          value={imgWebHook}
-                          onChange={(e) => setImgWebHook(e.target.value)}
-                        />
-                        <label className="flex items-center gap-2 text-sm">
-                          <input
-                            type="checkbox"
-                            checked={imgShutProgress}
-                            onChange={(e) => setImgShutProgress(e.target.checked)}
-                          />
-                          Shut Progress
-                        </label>
-                      </div>
 
                       <Button
                         onClick={async () => {
