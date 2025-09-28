@@ -188,6 +188,40 @@ export default function Home() {
   const [imgFilePreview, setImgFilePreview] = useState<string | null>(null);
   const [imgWebHook, setImgWebHook] = useState<string>("");
   const [imgShutProgress, setImgShutProgress] = useState<boolean>(false);
+  
+  // 进度条状态与计时器（新增）
+  const [progress, setProgress] = useState(0);
+  const progressTimeoutsRef = useRef<number[]>([]);
+  useEffect(() => {
+    const generating = isImageGenerating || isImg2ImgGenerating;
+    const sequence = [1, 28, 39, 45, 68, 86, 95];
+    const delays = [400, 800, 700, 700, 900, 1200, 1400]; // 每步延迟，营造节奏感
+
+    // 清理函数
+    const clearAll = () => {
+      progressTimeoutsRef.current.forEach((id) => clearTimeout(id));
+      progressTimeoutsRef.current = [];
+    };
+
+    if (generating) {
+      setProgress(0);
+      clearAll();
+      // 累加延迟，依次推进到指定百分比
+      let acc = 0;
+      progressTimeoutsRef.current = sequence.map((val, idx) => {
+        acc += delays[idx] ?? 600;
+        return window.setTimeout(() => setProgress(val), acc);
+      });
+    } else {
+      // 停止后重置
+      clearAll();
+      setProgress(0);
+    }
+
+    return () => {
+      clearAll();
+    };
+  }, [isImageGenerating, isImg2ImgGenerating]);
 
   const handleGenerateImage = async () => {
     if (!imagePrompt.trim()) {
@@ -423,8 +457,13 @@ export default function Home() {
                               />
 
                               {imgFilePreview && (
-                                <div className="relative w-full h-48">
-                                  <Image src={imgFilePreview} alt="Upload preview" fill className="object-contain" />
+                                <div className="space-y-2">
+                                  <div className="text-xs text-muted-foreground">Upload Preview</div>
+                                  <div className="relative w-full h-64 rounded-lg border border-border bg-muted/20 p-2">
+                                    <div className="relative w-full h-full overflow-hidden rounded-md">
+                                      <Image src={imgFilePreview} alt="Upload preview" fill className="object-contain" />
+                                    </div>
+                                  </div>
                                 </div>
                               )}
 
@@ -492,14 +531,31 @@ export default function Home() {
                           </p>
                         </div>
 
-                        <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-lg overflow-hidden relative min-h-[300px]">
+                        <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-lg overflow-hidden relative min-h-[500px] sm:min-h-[550px]">
                           {(isImageGenerating || isImg2ImgGenerating) ? (
-                            <div className="flex flex-col items-center justify-center gap-2">
+                            <div className="flex flex-col items-center justify-center gap-3">
                               <Loader2 className="h-8 w-8 animate-spin text-primary" />
                               <p className="text-sm text-muted-foreground">Generating your image...</p>
+                              {/* 炫酷进度条 */}
+                              <div className="w-64 sm:w-80 md:w-96 mt-2">
+                                <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
+                                  <span>Progress</span>
+                                  <span>{progress}%</span>
+                                </div>
+                                <div className="h-3 w-full bg-muted rounded-full overflow-hidden border border-border">
+                                  <div
+                                    className="h-full rounded-full transition-all duration-500 shadow-[0_0_10px_rgba(99,102,241,0.6)]"
+                                    style={{
+                                      width: `${progress}%`,
+                                      backgroundImage: 'linear-gradient(90deg, rgba(59,130,246,1) 0%, rgba(99,102,241,1) 50%, rgba(236,72,153,1) 100%)',
+                                    }}
+                                  />
+                                </div>
+                                <div className="mt-2 text-[11px] text-muted-foreground">1% → 28% → 39% → 45% → 68% → 86% → 95%</div>
+                              </div>
                             </div>
                           ) : generatedImageUrl ? (
-                            <div className="relative w-full h-full min-h-[300px]">
+                            <div className="relative w-full h-full min-h-[500px]">
                               <Image ref={imageRef} src={generatedImageUrl} alt="Generated image" fill className="object-contain" />
                             </div>
                           ) : (
