@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     // 提交任务接口
     const submitUrl = `${apiBase}/v1/draw/nano-banana`;
     console.log('[DEBUG] 请求 submitUrl:', submitUrl);
-    const response = await fetch(submitUrl, {
+    const submitRes = await fetch(submitUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,28 +38,41 @@ export async function POST(request: NextRequest) {
       }),
     });
 
-    const responseText = await response.text();
-    console.log('[DEBUG] 生成接口原始返回:', responseText);
-    debugger;
-
-    if (!response.ok) {
-      throw new Error(`API request failed with status ${response.status}: ${responseText}`);
+    if (!submitRes.body) {
+      throw new Error('生成接口未返回 body');
     }
 
-    let data;
-    try {
-      data = JSON.parse(responseText);
-      console.log('[DEBUG] 解析后的 data:', data);
-      debugger;
-    } catch (parseError) {
-      console.error('Failed to parse JSON:', responseText);
-      throw new Error(`Invalid JSON response: ${responseText}`);
+    const reader = submitRes.body.getReader();
+    const decoder = new TextDecoder();
+    let taskId: string | null = null;
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      const chunk = decoder.decode(value, { stream: true });
+      console.log('[DEBUG] 接收到流式数据:', chunk);
+
+      const match = chunk.match(/data:\s*(\{.*\})/);
+      if (match) {
+        try {
+          const obj = JSON.parse(match[1]);
+          if (obj.id && !taskId) {
+            taskId = obj.id;
+            console.log('[DEBUG] 成功获取任务ID:', taskId);
+            break;
+          }
+        } catch (err) {
+          console.error('[DEBUG] JSON parse error:', err, match[1]);
+        }
+      }
     }
 
-    // 检查接口返回的任务ID
-    if (!data || data.code !== 0 || !data.data || !data.data.id) {
-      console.log('[DEBUG] 任务ID检查失败:', { data });
-      return NextResponse.json({ error: 'API请求失败或未返回任务ID', detail: data }, { status: 500 });
+    if (!taskId) {
+      return NextResponse.json(
+        { error: '未获取到任务ID' },
+        { status: 500 }
+      );
     }
 
     // 查询结果接口
@@ -79,7 +92,7 @@ export async function POST(request: NextRequest) {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${apiKey}`,
         },
-        body: JSON.stringify({ id: data.data.id }),
+        body: JSON.stringify({ id: taskId  }),
       });
       const resultText = await resultRes.text();
       console.log('[DEBUG] 结果接口原始返回:', resultText);

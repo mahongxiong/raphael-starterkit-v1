@@ -12,6 +12,11 @@ const nextConfig: NextConfig = {
           hostname: "*.grsai.com",
           pathname: "/**",
         },
+        {
+          protocol: "https",
+          hostname: "dfddfb4a49b1498c394801e35be8b692.r2.cloudflarestorage.com",
+          pathname: "/**",
+        },
       ],
     },
 

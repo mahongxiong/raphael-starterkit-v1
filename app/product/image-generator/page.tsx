@@ -9,6 +9,7 @@ import { ArrowLeft, Image as ImageIcon, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export default function ImageGeneratorPage() {
   const router = useRouter();
@@ -17,6 +18,14 @@ export default function ImageGeneratorPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+
+  // Image-to-Image states
+  const [img2imgPrompt, setImg2imgPrompt] = useState("");
+  const [img2imgUrl, setImg2imgUrl] = useState<string | null>(null);
+  const [isImg2ImgGenerating, setIsImg2ImgGenerating] = useState(false);
+  const [imgFilePreview, setImgFilePreview] = useState<string | null>(null);
+  const [imgWebHook, setImgWebHook] = useState<string>("");
+  const [imgShutProgress, setImgShutProgress] = useState<boolean>(false);
 
   const handleGenerateImage = async () => {
     if (!prompt.trim()) {
@@ -99,7 +108,7 @@ export default function ImageGeneratorPage() {
 
       <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Prompt Input Section */}
+          {/* Tabs for T2I and I2I */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -108,37 +117,160 @@ export default function ImageGeneratorPage() {
             <Card className="overflow-hidden">
               <CardContent className="p-6">
                 <div className="space-y-4">
-                  <div>
+                  <div className="mb-4">
                     <h2 className="text-xl font-semibold mb-2 flex items-center gap-2">
                       <ImageIcon className="h-5 w-5 text-primary" />
-                      Enter Prompt
+                      Image Generation
                     </h2>
                     <p className="text-sm text-muted-foreground mb-4">
-                      Describe the image you want to generate—the more detailed, the better
+                      Switch between Text-to-Image and Image-to-Image
                     </p>
                   </div>
 
-                  <Textarea
-                    placeholder="e.g. A cute cat sitting on a windowsill with sunlight, blue sky and white clouds in the background"
-                    className="min-h-[150px] resize-none"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                  />
+                  <Tabs defaultValue="t2i">
+                    <TabsList>
+                      <TabsTrigger value="t2i">Text-to-Image</TabsTrigger>
+                      <TabsTrigger value="i2i">Image-to-Image</TabsTrigger>
+                    </TabsList>
 
-                  <Button
-                    onClick={handleGenerateImage}
-                    disabled={isGenerating || !prompt.trim()}
-                    className="w-full"
-                  >
-                    {isGenerating ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      "Generate Image"
-                    )}
-                  </Button>
+                    <TabsContent value="t2i" className="space-y-4">
+                      <Textarea
+                        placeholder="e.g. A cute cat sitting on a windowsill with sunlight, blue sky and white clouds in the background"
+                        className="min-h-[150px] resize-none"
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                      />
+
+                      <Button
+                        onClick={handleGenerateImage}
+                        disabled={isGenerating || !prompt.trim()}
+                        className="w-full"
+                      >
+                        {isGenerating ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          "Generate Image"
+                        )}
+                      </Button>
+                    </TabsContent>
+
+                    <TabsContent value="i2i" className="space-y-4">
+                      <Textarea
+                        placeholder="Enter the prompt for transformation"
+                        className="min-h-[120px] resize-none"
+                        value={img2imgPrompt}
+                        onChange={(e) => setImg2imgPrompt(e.target.value)}
+                      />
+
+                      {/* Upload image */}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = async () => {
+                            const base64 = (reader.result as string).split(",")[1];
+                            const uploadRes = await fetch('/api/image-generator/upload', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                fileName: `${Date.now()}-${file.name}`,
+                                contentType: file.type,
+                                data: base64,
+                              }),
+                            });
+                            const uploadData = await uploadRes.json();
+                            if (uploadRes.ok && uploadData.url) {
+                              setImgFilePreview(uploadData.url);
+                              setImg2imgUrl(uploadData.url);
+                            } else {
+                              toast({
+                                title: 'Upload failed',
+                                description: uploadData.error || 'Unable to upload image',
+                                variant: 'destructive',
+                              });
+                            }
+                          };
+                          reader.readAsDataURL(file);
+                        }}
+                      />
+                      {imgFilePreview && (
+                        <div className="relative w-full h-48">
+                          <Image src={imgFilePreview} alt="Upload preview" fill className="object-contain" />
+                        </div>
+                      )}
+
+                      {/* Optional: webhook and progress */}
+                      <div className="space-y-2">
+                        <input
+                          type="text"
+                          placeholder="Webhook URL (optional)"
+                          className="w-full border rounded px-3 py-2 text-sm"
+                          value={imgWebHook}
+                          onChange={(e) => setImgWebHook(e.target.value)}
+                        />
+                        <label className="flex items-center gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            checked={imgShutProgress}
+                            onChange={(e) => setImgShutProgress(e.target.checked)}
+                          />
+                          Shut Progress
+                        </label>
+                      </div>
+
+                      <Button
+                        onClick={async () => {
+                          if (!img2imgPrompt.trim() || !img2imgUrl) {
+                            toast({
+                              title: 'Prompt and image are required',
+                              variant: 'destructive',
+                            });
+                            return;
+                          }
+                          setIsImg2ImgGenerating(true);
+                          try {
+                            const res = await fetch('/api/image-generator/img2img', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({
+                                prompt: img2imgPrompt,
+                                urls: [img2imgUrl],
+                                webHook: imgWebHook || undefined,
+                                shutProgress: imgShutProgress,
+                              }),
+                            });
+                            const data = await res.json();
+                            if (res.ok && data.success && data.image) {
+                              setGeneratedImage(data.image);
+                            } else {
+                              toast({ title: 'Image-to-Image failed', description: data.error || 'Try again later', variant: 'destructive' });
+                            }
+                          } catch (err) {
+                            toast({ title: 'Image-to-Image error', description: String(err), variant: 'destructive' });
+                          } finally {
+                            setIsImg2ImgGenerating(false);
+                          }
+                        }}
+                        className="w-full"
+                        disabled={isImg2ImgGenerating}
+                      >
+                        {isImg2ImgGenerating ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Generating...
+                          </>
+                        ) : (
+                          'Generate from Image'
+                        )}
+                      </Button>
+                    </TabsContent>
+                  </Tabs>
                 </div>
               </CardContent>
             </Card>
