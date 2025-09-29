@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Image as ImageIcon, Loader2 } from "lucide-react";
+import { ArrowLeft, Image as ImageIcon, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
@@ -18,14 +18,37 @@ export default function ImageGeneratorPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const imageRef = useRef<HTMLImageElement>(null);
+  // Approximate progress state
+  const [progress, setProgress] = useState(0);
+  const progressTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Image-to-Image states
-  const [img2imgPrompt, setImg2imgPrompt] = useState("");
-  const [img2imgUrl, setImg2imgUrl] = useState<string | null>(null);
-  const [isImg2ImgGenerating, setIsImg2ImgGenerating] = useState(false);
+  // 图生图相关状态
   const [imgFilePreview, setImgFilePreview] = useState<string | null>(null);
-  const [imgWebHook, setImgWebHook] = useState<string>("");
+  const [img2imgUrl, setImg2imgUrl] = useState<string | null>(null);
+  const [img2imgPrompt, setImg2imgPrompt] = useState("");
+  const [isImg2ImgGenerating, setIsImg2ImgGenerating] = useState(false);
+  const [imgWebHook, setImgWebHook] = useState<string | null>(null);
   const [imgShutProgress, setImgShutProgress] = useState<boolean>(false);
+
+  const startProgress = () => {
+    setProgress(0);
+    if (progressTimerRef.current) clearInterval(progressTimerRef.current);
+    let current = 0;
+    progressTimerRef.current = setInterval(() => {
+      // Increase 3-10% until reaching ~90%
+      current = Math.min(current + Math.floor(Math.random() * 8) + 3, 90);
+      setProgress(current);
+    }, 500);
+  };
+
+  const stopProgress = () => {
+    if (progressTimerRef.current) {
+      clearInterval(progressTimerRef.current);
+      progressTimerRef.current = null;
+    }
+    setProgress(100);
+    setTimeout(() => setProgress(0), 1500);
+  };
 
   const handleGenerateImage = async () => {
     if (!prompt.trim()) {
@@ -38,6 +61,7 @@ export default function ImageGeneratorPage() {
     }
 
     setIsGenerating(true);
+    startProgress();
     try {
       const response = await fetch("/api/image-generator/generate", {
         method: "POST",
@@ -65,6 +89,7 @@ export default function ImageGeneratorPage() {
       });
     } finally {
       setIsGenerating(false);
+      stopProgress();
     }
   };
 
@@ -146,76 +171,81 @@ export default function ImageGeneratorPage() {
                         disabled={isGenerating || !prompt.trim()}
                         className="w-full"
                       >
-                        {isGenerating ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Generating...
-                          </>
-                        ) : (
-                          "Generate Image"
-                        )}
+                        {isGenerating ? `生成中...` : "生成图片"}
                       </Button>
                     </TabsContent>
 
                     <TabsContent value="i2i" className="space-y-4">
+                      {/* Upload image area first, styled big area */}
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">参考图像</label>
+                        <div className="border-2 border-dashed rounded-lg min-h-[300px] h-[320px] p-6 bg-muted/10 text-center hover:bg-muted/20 transition relative cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="absolute inset-0 opacity-0 cursor-pointer"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const reader = new FileReader();
+                              reader.onload = async () => {
+                                const base64 = (reader.result as string).split(",")[1];
+                                const uploadRes = await fetch('/api/image-generator/upload', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    fileName: `${Date.now()}-${file.name}`,
+                                    contentType: file.type,
+                                    data: base64,
+                                  }),
+                                });
+                                const uploadData = await uploadRes.json();
+                                if (uploadRes.ok && uploadData.url) {
+                                  setImgFilePreview(uploadData.url);
+                                  setImg2imgUrl(uploadData.url);
+                                } else {
+                                  toast({
+                                    title: '上传失败',
+                                    description: uploadData.error || '图片上传失败',
+                                    variant: 'destructive',
+                                  });
+                                }
+                              };
+                              reader.readAsDataURL(file);
+                            }}
+                          />
+                          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
+                            <Plus className="h-8 w-8 text-muted-foreground" />
+                            <p className="text-sm text-muted-foreground">添加图片（最大50MB）</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {imgFilePreview && (
+                        <div className="relative w-full h-72 rounded-lg overflow-hidden border bg-background">
+                          <Image src={imgFilePreview} alt="Upload preview" fill className="object-contain" />
+                        </div>
+                      )}
+
+                      {/* Prompt after upload area */}
                       <Textarea
-                        placeholder="Enter the prompt for transformation"
+                        placeholder="请输入用于转换的提示词"
                         className="min-h-[120px] resize-none"
                         value={img2imgPrompt}
                         onChange={(e) => setImg2imgPrompt(e.target.value)}
                       />
 
-                      {/* Upload image */}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
-                          const reader = new FileReader();
-                          reader.onload = async () => {
-                            const base64 = (reader.result as string).split(",")[1];
-                            const uploadRes = await fetch('/api/image-generator/upload', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                fileName: `${Date.now()}-${file.name}`,
-                                contentType: file.type,
-                                data: base64,
-                              }),
-                            });
-                            const uploadData = await uploadRes.json();
-                            if (uploadRes.ok && uploadData.url) {
-                              setImgFilePreview(uploadData.url);
-                              setImg2imgUrl(uploadData.url);
-                            } else {
-                              toast({
-                                title: 'Upload failed',
-                                description: uploadData.error || 'Unable to upload image',
-                                variant: 'destructive',
-                              });
-                            }
-                          };
-                          reader.readAsDataURL(file);
-                        }}
-                      />
-                      {imgFilePreview && (
-                        <div className="relative w-full h-48">
-                          <Image src={imgFilePreview} alt="Upload preview" fill className="object-contain" />
-                        </div>
-                      )}
-
-
                       <Button
                         onClick={async () => {
                           if (!img2imgPrompt.trim() || !img2imgUrl) {
                             toast({
-                              title: 'Prompt and image are required',
+                              title: '提示词与参考图像必填',
                               variant: 'destructive',
                             });
                             return;
                           }
                           setIsImg2ImgGenerating(true);
+                          startProgress();
                           try {
                             const res = await fetch('/api/image-generator/img2img', {
                               method: 'POST',
@@ -231,25 +261,19 @@ export default function ImageGeneratorPage() {
                             if (res.ok && data.success && data.image) {
                               setGeneratedImage(data.image);
                             } else {
-                              toast({ title: 'Image-to-Image failed', description: data.error || 'Try again later', variant: 'destructive' });
+                              toast({ title: '图生图失败', description: data.error || '请稍后再试', variant: 'destructive' });
                             }
                           } catch (err) {
-                            toast({ title: 'Image-to-Image error', description: String(err), variant: 'destructive' });
+                            toast({ title: '图生图错误', description: String(err), variant: 'destructive' });
                           } finally {
                             setIsImg2ImgGenerating(false);
+                            stopProgress();
                           }
                         }}
                         className="w-full"
                         disabled={isImg2ImgGenerating}
                       >
-                        {isImg2ImgGenerating ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Generating...
-                          </>
-                        ) : (
-                          'Generate from Image'
-                        )}
+                        {isImg2ImgGenerating ? `生成中...` : '根据图片生成'}
                       </Button>
                     </TabsContent>
                   </Tabs>
@@ -274,12 +298,16 @@ export default function ImageGeneratorPage() {
                 </div>
 
                 <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-lg overflow-hidden relative min-h-[300px]">
-                  {isGenerating ? (
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      <p className="text-sm text-muted-foreground">
-                        Generating your image...
-                      </p>
+                  {isGenerating || isImg2ImgGenerating ? (
+                    <div className="flex flex-col items-center justify-center gap-4 w-full px-6">
+                      <p className="text-sm text-muted-foreground">正在生成您的图片，请稍候...</p>
+                      <div className="w-full max-w-xl h-3 rounded-full bg-muted overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-primary via-rose-400 to-emerald-400 transition-all"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground">进度 {progress}%</p>
                     </div>
                   ) : generatedImage ? (
                     <div className="relative w-full h-full min-h-[300px]">
@@ -295,7 +323,7 @@ export default function ImageGeneratorPage() {
                     <div className="flex flex-col items-center justify-center gap-2">
                       <ImageIcon className="h-16 w-16 text-muted-foreground/40" />
                       <p className="text-sm text-muted-foreground">
-                        Enter a prompt and click the generate button
+                        输入提示词并点击生成按钮
                       </p>
                     </div>
                   )}
