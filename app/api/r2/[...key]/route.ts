@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 
-export async function GET(request: NextRequest, { params }: { params: { key: string[] } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ key: string[] }> }) {
   try {
     const accountId = process.env.CF_R2_ACCOUNT_ID as string;
     const accessKeyId = process.env.CF_R2_ACCESS_KEY_ID as string;
@@ -18,9 +18,10 @@ export async function GET(request: NextRequest, { params }: { params: { key: str
       credentials: { accessKeyId, secretAccessKey },
     });
 
-    const key = params.key.join('/');
+    const { key } = await params;
+    const objectKey = key.join('/');
 
-    const res = await client.send(new GetObjectCommand({ Bucket: bucket, Key: key }));
+    const res = await client.send(new GetObjectCommand({ Bucket: bucket, Key: objectKey }));
     const contentType = res.ContentType || 'application/octet-stream';
 
     // Convert stream to Buffer

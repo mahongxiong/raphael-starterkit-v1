@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, Image as ImageIcon, Plus } from "lucide-react";
+import { ArrowLeft, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
@@ -215,7 +215,7 @@ export default function ImageGeneratorPage() {
                             }}
                           />
                           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
-                            <Plus className="h-8 w-8 text-muted-foreground" />
+                            {/* 移除 + 号图标 */}
                             <p className="text-sm text-muted-foreground">添加图片（最大50MB）</p>
                           </div>
                         </div>
@@ -235,46 +235,48 @@ export default function ImageGeneratorPage() {
                         onChange={(e) => setImg2imgPrompt(e.target.value)}
                       />
 
-                      <Button
-                        onClick={async () => {
-                          if (!img2imgPrompt.trim() || !img2imgUrl) {
-                            toast({
-                              title: '提示词与参考图像必填',
-                              variant: 'destructive',
-                            });
-                            return;
-                          }
-                          setIsImg2ImgGenerating(true);
-                          startProgress();
-                          try {
-                            const res = await fetch('/api/image-generator/img2img', {
-                              method: 'POST',
-                              headers: { 'Content-Type': 'application/json' },
-                              body: JSON.stringify({
-                                prompt: img2imgPrompt,
-                                urls: [img2imgUrl],
-                                webHook: imgWebHook || undefined,
-                                shutProgress: imgShutProgress,
-                              }),
-                            });
-                            const data = await res.json();
-                            if (res.ok && data.success && data.image) {
-                              setGeneratedImage(data.image);
-                            } else {
-                              toast({ title: '图生图失败', description: data.error || '请稍后再试', variant: 'destructive' });
+                      <div className="w-full">
+                        <Button
+                          onClick={async () => {
+                            if (!img2imgPrompt.trim() || !img2imgUrl) {
+                              toast({
+                                title: '提示词与参考图像必填',
+                                variant: 'destructive',
+                              });
+                              return;
                             }
-                          } catch (err) {
-                            toast({ title: '图生图错误', description: String(err), variant: 'destructive' });
-                          } finally {
-                            setIsImg2ImgGenerating(false);
-                            stopProgress();
-                          }
-                        }}
-                        className="w-full"
-                        disabled={isImg2ImgGenerating}
-                      >
-                        {isImg2ImgGenerating ? `生成中...` : '根据图片生成'}
-                      </Button>
+                            setIsImg2ImgGenerating(true);
+                            startProgress();
+                            try {
+                              const res = await fetch('/api/image-generator/img2img', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                  prompt: img2imgPrompt,
+                                  urls: [img2imgUrl],
+                                  webHook: imgWebHook || undefined,
+                                  shutProgress: imgShutProgress,
+                                }),
+                              });
+                              const data = await res.json();
+                              if (res.ok && data.success && data.image) {
+                                setGeneratedImage(data.image);
+                              } else {
+                                toast({ title: '图生图失败', description: data.error || '请稍后再试', variant: 'destructive' });
+                              }
+                            } catch (err) {
+                              toast({ title: '图生图错误', description: String(err), variant: 'destructive' });
+                            } finally {
+                              setIsImg2ImgGenerating(false);
+                              stopProgress();
+                            }
+                          }}
+                          className="w-full"
+                          disabled={isImg2ImgGenerating}
+                        >
+                          {isImg2ImgGenerating ? `生成中...` : '根据图片生成'}
+                        </Button>
+                      </div>
                     </TabsContent>
                   </Tabs>
                 </div>

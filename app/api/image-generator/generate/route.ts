@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createClient as createSupabaseServerClient } from '@/utils/supabase/server';
+import { createServiceRoleClient } from '@/utils/supabase/service-role';
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,6 +23,64 @@ export async function POST(request: NextRequest) {
         { error: '服务器缺少 NANO_BANANA 配置' },
         { status: 500 }
       );
+    }
+
+    // 新增：记录生成任务到数据库（未登录也记录）
+    let recordId: string | null = null;
+    let supabaseServer: Awaited<ReturnType<typeof createSupabaseServerClient>> | null = null;
+    let supabaseService: ReturnType<typeof createServiceRoleClient> | null = null;
+    let dbClient: any = null;
+    let user: { id: string } | null = null;
+    try {
+      supabaseServer = await createSupabaseServerClient();
+      const { data: userData } = await supabaseServer.auth.getUser();
+      user = userData?.user ?? null;
+      if (user) {
+        const { data: inserted, error: insertError } = await supabaseServer
+          .from('generation_records')
+          .insert({
+            user_id: user.id,
+            type: 'txt2img',
+            prompt,
+            input_images: [],
+            status: 'queued',
+          })
+          .select('id')
+          .single();
+        if (!insertError && inserted?.id) {
+          recordId = inserted.id as string;
+          dbClient = supabaseServer;
+          console.log('[DEBUG] 已创建生成记录:', recordId);
+        } else if (insertError) {
+          console.warn('[DEBUG] 创建生成记录失败:', insertError.message);
+        }
+      } else {
+        if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+          supabaseService = createServiceRoleClient();
+          const { data: insertedAnon, error: insertAnonError } = await supabaseService
+            .from('generation_records')
+            .insert({
+              user_id: null,
+              type: 'txt2img',
+              prompt,
+              input_images: [],
+              status: 'queued',
+            })
+            .select('id')
+            .single();
+          if (!insertAnonError && insertedAnon?.id) {
+            recordId = insertedAnon.id as string;
+            dbClient = supabaseService;
+            console.log('[DEBUG] 已创建匿名生成记录:', recordId);
+          } else if (insertAnonError) {
+            console.warn('[DEBUG] 创建匿名生成记录失败:', insertAnonError.message);
+          }
+        } else {
+          console.warn('[DEBUG] 缺少 SUPABASE_SERVICE_ROLE_KEY，未登录用户无法记录生成任务');
+        }
+      }
+    } catch (dbInitErr) {
+      console.warn('[DEBUG] 初始化 Supabase 失败或未登录，可能跳过记录:', dbInitErr);
     }
 
     // 提交任务接口
@@ -60,6 +120,20 @@ export async function POST(request: NextRequest) {
           if (obj.id && !taskId) {
             taskId = obj.id;
             console.log('[DEBUG] 成功获取任务ID:', taskId);
+            // 新增：更新记录为 processing 并写入 provider_job_id（未登录也更新）
+            if (dbClient && recordId && taskId) {
+              try {
+                let q = dbClient
+                  .from('generation_records')
+                  .update({ provider_job_id: taskId, status: 'processing' })
+                  .eq('id', recordId);
+                if (user) q = q.eq('user_id', user.id);
+                await q;
+                console.log('[DEBUG] 已更新记录为 processing');
+              } catch (updateErr) {
+                console.warn('[DEBUG] 更新记录为 processing 失败:', updateErr);
+              }
+            }
             break;
           }
         } catch (err) {
@@ -69,6 +143,19 @@ export async function POST(request: NextRequest) {
     }
 
     if (!taskId) {
+      // 新增：失败状态写入数据库（未登录也更新）
+      if (dbClient && recordId) {
+        try {
+          let q = dbClient
+            .from('generation_records')
+            .update({ status: 'failed', error: '未获取到任务ID' })
+            .eq('id', recordId);
+          if (user) q = q.eq('user_id', user.id);
+          await q;
+        } catch (updateErr) {
+          console.warn('[DEBUG] 更新记录为 failed 失败:', updateErr);
+        }
+      }
       return NextResponse.json(
         { error: '未获取到任务ID' },
         { status: 500 }
@@ -103,6 +190,19 @@ export async function POST(request: NextRequest) {
         console.log('[DEBUG] 结果接口解析后:', resultData);
         debugger;
       } catch (err) {
+        // 新增：失败状态写入数据库（未登录也更新）
+        if (dbClient && recordId) {
+          try {
+            let q = dbClient
+              .from('generation_records')
+              .update({ status: 'failed', error: '结果接口返回格式错误' })
+              .eq('id', recordId);
+            if (user) q = q.eq('user_id', user.id);
+            await q;
+          } catch (updateErr) {
+            console.warn('[DEBUG] 更新记录为 failed 失败:', updateErr);
+          }
+        }
         return NextResponse.json({ error: '结果接口返回格式错误', detail: resultText }, { status: 500 });
       }
       status = resultData?.data?.status;
@@ -115,6 +215,19 @@ export async function POST(request: NextRequest) {
         break;
       }
       if (status === 'failed') {
+        // 新增：失败状态写入数据库（未登录也更新）
+        if (dbClient && recordId) {
+          try {
+            let q = dbClient
+              .from('generation_records')
+              .update({ status: 'failed', error: JSON.stringify(resultData) })
+              .eq('id', recordId);
+            if (user) q = q.eq('user_id', user.id);
+            await q;
+          } catch (updateErr) {
+            console.warn('[DEBUG] 更新记录为 failed 失败:', updateErr);
+          }
+        }
         return NextResponse.json({ error: '图片生成失败', detail: resultData }, { status: 500 });
       }
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -122,7 +235,35 @@ export async function POST(request: NextRequest) {
     }
     if (!imageUrl) {
       console.log('[DEBUG] 最终未获取到图片 URL:', { status, results });
+      // 新增：失败状态写入数据库（未登录也更新）
+      if (dbClient && recordId) {
+        try {
+          let q = dbClient
+            .from('generation_records')
+            .update({ status: 'failed', error: JSON.stringify({ status, results }) })
+            .eq('id', recordId);
+          if (user) q = q.eq('user_id', user.id);
+          await q;
+        } catch (updateErr) {
+          console.warn('[DEBUG] 更新记录为 failed 失败:', updateErr);
+        }
+      }
       return NextResponse.json({ error: '未获取到图片URL', detail: { status, results } }, { status: 500 });
+    }
+
+    // 新增：成功状态写入数据库（未登录也更新）
+    if (dbClient && recordId && imageUrl) {
+      try {
+        let q = dbClient
+          .from('generation_records')
+          .update({ status: 'succeeded', output_image_url: imageUrl })
+          .eq('id', recordId);
+        if (user) q = q.eq('user_id', user.id);
+        await q;
+        console.log('[DEBUG] 已更新记录为 succeeded');
+      } catch (updateErr) {
+        console.warn('[DEBUG] 更新记录为 succeeded 失败:', updateErr);
+      }
     }
 
     console.log('[DEBUG] 返回前端:', { success: true, image: imageUrl });

@@ -16,7 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import Image from "next/image";
-import { Loader2, Image as ImageIcon, Plus } from "lucide-react";
+import { Loader2, Image as ImageIcon } from "lucide-react";
 
 interface NameData {
   chinese: string;
@@ -523,8 +523,7 @@ export default function Home() {
                                         }}
                                       />
                                       <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
-                                        <Plus className="h-8 w-8 text-muted-foreground" />
-                                        <p className="text-sm text-muted-foreground">添加图片（最大50MB）</p>
+                                      <p className="text-sm text-muted-foreground">添加图片（最大50MB）</p>
                                       </div>
                                     </div>
                                   </div>
@@ -566,7 +565,7 @@ export default function Home() {
                                       }}
                                     />
                                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
-                                      <Plus className="h-8 w-8 text-muted-foreground" />
+                                      {/* 移除 + 号图标 */}
                                       <p className="text-sm text-muted-foreground">添加图片（最大50MB）</p>
                                     </div>
                                   </div>
@@ -617,7 +616,7 @@ export default function Home() {
                               {isImg2ImgGenerating ? `生成中...` : '根据图片生成'}
                             </Button>
                           </TabsContent>
-+                         </Tabs>
+                         </Tabs>
                         </div>
                       </CardContent>
                     </Card>
