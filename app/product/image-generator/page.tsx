@@ -171,14 +171,14 @@ export default function ImageGeneratorPage() {
                         disabled={isGenerating || !prompt.trim()}
                         className="w-full"
                       >
-                        {isGenerating ? `生成中...` : "生成图片"}
+                        {isGenerating ? `Generating...` : "Generate image"}
                       </Button>
                     </TabsContent>
 
                     <TabsContent value="i2i" className="space-y-4">
                       {/* Upload image area first, styled big area */}
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">参考图像</label>
+                        <label className="text-sm font-medium">Reference Image</label>
                         <div className="border-2 border-dashed rounded-lg min-h-[300px] h-[320px] p-6 bg-muted/10 text-center hover:bg-muted/20 transition relative cursor-pointer">
                           <input
                             type="file"
@@ -205,8 +205,8 @@ export default function ImageGeneratorPage() {
                                   setImg2imgUrl(uploadData.url);
                                 } else {
                                   toast({
-                                    title: '上传失败',
-                                    description: uploadData.error || '图片上传失败',
+                                    title: 'Image upload failed',
+                                    description: uploadData.error || 'Please try again later',
                                     variant: 'destructive',
                                   });
                                 }
@@ -216,7 +216,7 @@ export default function ImageGeneratorPage() {
                           />
                           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
                             {/* 移除 + 号图标 */}
-                            <p className="text-sm text-muted-foreground">添加图片（最大50MB）</p>
+                            <p className="text-sm text-muted-foreground">Add image (max 50MB)</p>
                           </div>
                         </div>
                       </div>
@@ -229,7 +229,7 @@ export default function ImageGeneratorPage() {
 
                       {/* Prompt after upload area */}
                       <Textarea
-                        placeholder="请输入用于转换的提示词"
+                        placeholder="Enter prompt to transform the image"
                         className="min-h-[120px] resize-none"
                         value={img2imgPrompt}
                         onChange={(e) => setImg2imgPrompt(e.target.value)}
@@ -240,7 +240,7 @@ export default function ImageGeneratorPage() {
                           onClick={async () => {
                             if (!img2imgPrompt.trim() || !img2imgUrl) {
                               toast({
-                                title: '提示词与参考图像必填',
+                                title: 'Prompt and reference image are required',
                                 variant: 'destructive',
                               });
                               return;
@@ -262,10 +262,10 @@ export default function ImageGeneratorPage() {
                               if (res.ok && data.success && data.image) {
                                 setGeneratedImage(data.image);
                               } else {
-                                toast({ title: '图生图失败', description: data.error || '请稍后再试', variant: 'destructive' });
+                                toast({ title: 'Image generation failed', description: data.error || 'Please try again later', variant: 'destructive' });
                               }
                             } catch (err) {
-                              toast({ title: '图生图错误', description: String(err), variant: 'destructive' });
+                              toast({ title: 'Image generation error', description: String(err), variant: 'destructive' });
                             } finally {
                               setIsImg2ImgGenerating(false);
                               stopProgress();
@@ -274,7 +274,7 @@ export default function ImageGeneratorPage() {
                           className="w-full"
                           disabled={isImg2ImgGenerating}
                         >
-                          {isImg2ImgGenerating ? `生成中...` : '根据图片生成'}
+                          {isImg2ImgGenerating ? `Generating...` : 'Generate image'}
                         </Button>
                       </div>
                     </TabsContent>
@@ -302,14 +302,14 @@ export default function ImageGeneratorPage() {
                 <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-lg overflow-hidden relative min-h-[300px]">
                   {isGenerating || isImg2ImgGenerating ? (
                     <div className="flex flex-col items-center justify-center gap-4 w-full px-6">
-                      <p className="text-sm text-muted-foreground">正在生成您的图片，请稍候...</p>
+                      <p className="text-sm text-muted-foreground">Generating your image, please wait...</p>
                       <div className="w-full max-w-xl h-3 rounded-full bg-muted overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-primary via-rose-400 to-emerald-400 transition-all"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
-                      <p className="text-xs text-muted-foreground">进度 {progress}%</p>
+                      <p className="text-xs text-muted-foreground">Progress {progress}%</p>
                     </div>
                   ) : generatedImage ? (
                     <div className="relative w-full h-full min-h-[300px]">
@@ -325,7 +325,7 @@ export default function ImageGeneratorPage() {
                     <div className="flex flex-col items-center justify-center gap-2">
                       <ImageIcon className="h-16 w-16 text-muted-foreground/40" />
                       <p className="text-sm text-muted-foreground">
-                        输入提示词并点击生成按钮
+                        Enter a prompt and click the generate button
                       </p>
                     </div>
                   )}

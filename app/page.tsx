@@ -454,14 +454,14 @@ export default function Home() {
                                 disabled={isImageGenerating || !imagePrompt.trim()}
                                 className="w-full"
                               >
-                                {isImageGenerating ? `生成中...` : "生成图片"}
+{isImageGenerating ? `loading...` : "Generate Image"}
                               </Button>
                             </TabsContent>
 
                             <TabsContent value="i2i" className="space-y-4">
                               {/* 上传区域置前，统一风格的大卡片样式（缩小为原来的一半），并在框内显示预览 */}
                               <div className="space-y-2">
-                                <label className="text-sm font-medium">参考图像</label>
+                                <label className="text-sm font-medium">Reference Image</label>
                                 {imgFilePreview ? (
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {/* 左侧：已添加图片，仍可点击更换 */}
@@ -491,8 +491,8 @@ export default function Home() {
                                               setImg2imgUrl(uploadData.url);
                                             } else {
                                               toast({
-                                                title: '上传失败',
-                                                description: uploadData.error || '图片上传失败',
+                                                title: 'upload error',
+                                                description: uploadData.error || 'image upload error',
                                                 variant: 'destructive',
                                               });
                                             }
@@ -502,7 +502,7 @@ export default function Home() {
                                       />
                                       <Image src={imgFilePreview} alt="Upload preview" fill className="object-contain" />
                                       <div className="absolute bottom-2 left-2 text-xs text-muted-foreground bg-background/50 rounded px-2 py-1">
-                                        已添加图片，点击可更换
+                                        Image added, click to change
                                       </div>
                                     </div>
                                     {/* 右侧：再添加一个“添加图片”卡片，往旁边挪一个 */}
@@ -532,8 +532,8 @@ export default function Home() {
                                               setImg2imgUrl(uploadData.url);
                                             } else {
                                               toast({
-                                                title: '上传失败',
-                                                description: uploadData.error || '图片上传失败',
+                                                title: 'upload failed',
+                                                description: uploadData.error || 'image upload failed',
                                                 variant: 'destructive',
                                               });
                                             }
@@ -542,7 +542,7 @@ export default function Home() {
                                         }}
                                       />
                                       <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
-                                      <p className="text-sm text-muted-foreground">添加图片（最大50MB）</p>
+                                      <p className="text-sm text-muted-foreground">Add image (max 50MB)</p>
                                       </div>
                                     </div>
                                   </div>
@@ -574,8 +574,8 @@ export default function Home() {
                                             setImg2imgUrl(uploadData.url);
                                           } else {
                                             toast({
-                                              title: '上传失败',
-                                              description: uploadData.error || '图片上传失败',
+                                              title: 'upload failed',
+                                              description: uploadData.error || 'image upload failed',
                                               variant: 'destructive',
                                             });
                                           }
@@ -585,7 +585,7 @@ export default function Home() {
                                     />
                                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
                                       {/* 移除 + 号图标 */}
-                                      <p className="text-sm text-muted-foreground">添加图片（最大50MB）</p>
+                                      <p className="text-sm text-muted-foreground">Add image (max 50MB)</p>
                                     </div>
                                   </div>
                                 )}
@@ -593,7 +593,7 @@ export default function Home() {
                             
                             {/* 提示词在上传区域之后 */}
                             <Textarea
-                              placeholder="请输入用于转换的提示词"
+                              placeholder="Enter prompt for image conversion"
                               className="min-h-[120px] resize-none"
                               value={img2imgPrompt}
                               onChange={(e) => setImg2imgPrompt(e.target.value)}
@@ -602,7 +602,7 @@ export default function Home() {
                             <Button
                               onClick={async () => {
                                 if (!img2imgPrompt.trim() || !img2imgUrl) {
-                                  toast({ title: '提示词与参考图像必填', variant: 'destructive' });
+                                  toast({ title: 'prompt and reference image are required', variant: 'destructive' });
                                   return;
                                 }
                                 setIsImg2ImgGenerating(true);
@@ -621,10 +621,10 @@ export default function Home() {
                                   if (res.ok && data.success && data.image) {
                                     setGeneratedImageUrl(data.image);
                                   } else {
-                                    toast({ title: '图生图失败', description: data.error || '请稍后再试', variant: 'destructive' });
+                                    toast({ title: 'image generation failed', description: data.error || 'please try again later', variant: 'destructive' });
                                   }
                                 } catch (err) {
-                                  toast({ title: '图生图错误', description: String(err), variant: 'destructive' });
+                                  toast({ title: 'image generation error', description: String(err), variant: 'destructive' });
                                 } finally {
                                   setIsImg2ImgGenerating(false);
                                 }
@@ -632,7 +632,7 @@ export default function Home() {
                               className="w-full"
                               disabled={isImg2ImgGenerating}
                             >
-                              {isImg2ImgGenerating ? `生成中...` : '根据图片生成'}
+                              {isImg2ImgGenerating ? `Generating...` : 'Generate image from prompt'}
                             </Button>
                           </TabsContent>
                          </Tabs>
@@ -659,7 +659,7 @@ export default function Home() {
                         <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-lg overflow-hidden relative min-h-[500px] sm:min-h-[550px]">
                           {(isImageGenerating || isImg2ImgGenerating) ? (
                             <div className="flex flex-col items-center justify-center gap-3">
-                              <p className="text-sm text-muted-foreground">正在生成您的图片，请稍候...</p>
+                              <p className="text-sm text-muted-foreground">Generating your image, please wait...</p>
                               <div className="w-64 sm:w-80 md:w-96 mt-2">
                                 <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
                                   <span>Progress</span>
@@ -699,6 +699,133 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+
+       {/* Features Section */}
+      <section className="py-20 bg-gradient-to-b from-muted/20 to-muted/10">
+        <div className="container px-4 md:px-6">
+          <div className="mx-auto max-w-6xl space-y-12">
+            <div className="space-y-4 text-center">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                Why Choose Nano Banana?
+              </h2>
+              <p className="mx-auto max-w-[700px] text-muted-foreground text-lg">
+                Start your creative journey with Nano Banana's AI image generation today.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true }}
+                className="relative overflow-hidden rounded-lg border bg-background p-8 hover:border-primary/50 transition-colors duration-200 hover:shadow-lg"
+              >
+                <div className="space-y-4">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <span className="text-2xl">💬</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Natural Language Control</h3>
+                  <p className="text-muted-foreground">
+                    Transform your ideas into images using simple text commands. Our AI understands your creative vision just like chatting with a friend.
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                viewport={{ once: true }}
+                className="relative overflow-hidden rounded-lg border bg-background p-8 hover:border-primary/50 transition-colors duration-200 hover:shadow-lg"
+              >
+                <div className="space-y-4">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <span className="text-2xl">🎨</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Smart Enhancement</h3>
+                  <p className="text-muted-foreground">
+                    Elevate your existing images with intelligent style transfer and enhancement tools. Turn ordinary photos into extraordinary artwork.
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="relative overflow-hidden rounded-lg border bg-background p-8 hover:border-primary/50 transition-colors duration-200 hover:shadow-lg"
+              >
+                <div className="space-y-4">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <span className="text-2xl">⚡</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Lightning Speed</h3>
+                  <p className="text-muted-foreground">
+                    Watch your creations come to life instantly with our optimized generation engine. Real-time updates keep you in the loop.
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="relative overflow-hidden rounded-lg border bg-background p-8 hover:border-primary/50 transition-colors duration-200 hover:shadow-lg"
+              >
+                <div className="space-y-4">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <span className="text-2xl">👤</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Perfect Consistency</h3>
+                  <p className="text-muted-foreground">
+                    Keep your characters looking exactly as intended across multiple generations. Every detail stays true to your vision.
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true }}
+                className="relative overflow-hidden rounded-lg border bg-background p-8 hover:border-primary/50 transition-colors duration-200 hover:shadow-lg"
+              >
+                <div className="space-y-4">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <span className="text-2xl">🎯</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">First-Time Success</h3>
+                  <p className="text-muted-foreground">
+                    Get the results you want on your first try. Our advanced AI understands your requirements and delivers precisely what you need.
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                viewport={{ once: true }}
+                className="relative overflow-hidden rounded-lg border bg-background p-8 hover:border-primary/50 transition-colors duration-200 hover:shadow-lg"
+              >
+                <div className="space-y-4">
+                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                    <span className="text-2xl">📱</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Social Media Ready</h3>
+                  <p className="text-muted-foreground">
+                    Create engaging content that stands out on any platform. Perfect for influencers and brands looking to make an impact.
+                  </p>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -872,8 +999,7 @@ export default function Home() {
                     </svg>
                   </div>
                   <div className={`mt-2 text-muted-foreground overflow-hidden transition-all duration-300 ${expandedFaqs['try-it'] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                    You can start using Nano Banana right now! Try our free tier with 5 daily generations, 
-                    or sign up for a premium account to unlock unlimited generations and advanced features. 
+                    You can start using Nano Banana right now!  sign up for a premium account to unlock unlimited generations and advanced features. 
                     Just scroll up to the generator section and start creating.
                   </div>
                 </button>
@@ -883,91 +1009,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-muted/20">
-        <div className="container px-4 md:px-6">
-          <div className="mx-auto max-w-6xl space-y-12 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="space-y-4"
-            >
-              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                Ready to Create Amazing Images?
-              </h2>
-              <p className="mx-auto max-w-3xl text-muted-foreground text-lg">
-                Start your creative journey with Nano Banana's AI image generation today.
-              </p>
-              <div className="mt-10 flex items-center justify-center gap-x-6">
-                <Button asChild>
-                  <Link href="#image-generator-form">Get Started</Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link href="/terms">Learn more</Link>
-                </Button>
-              </div>
-            </motion.div>
-            
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="rounded-2xl bg-background p-8 shadow-sm border border-border"
-              >
-                <div className="space-y-4">
-                  <h3 className="text-xl font-bold text-foreground">Free</h3>
-                  <p className="text-muted-foreground">Perfect for trying out our service.</p>
-                  <ul className="space-y-2 text-muted-foreground">
-                    <li>✓ 5 image generations per day</li>
-                    <li>✓ Basic image styles</li>
-                    <li>✓ Standard resolution</li>
-                  </ul>
-                  <p className="text-3xl font-bold text-foreground">$0</p>
-                  <Button className="w-full" variant="outline">
-                    Get Started
-                  </Button>
-                </div>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.6 }}
-                className="rounded-2xl bg-background p-8 shadow-sm border border-border"
-              >
-                <div className="space-y-4">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <span className="text-2xl">🖼️</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground">Image Enhancement</h3>
-                  <p className="text-muted-foreground">
-                    Take your existing images to the next level with our image-to-image transformation technology and creative style transfer.
-                  </p>
-                </div>
-              </motion.div>
-              
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="rounded-2xl bg-background p-8 shadow-sm border border-border"
-              >
-                <div className="space-y-4">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <span className="text-2xl">⚡</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground">Fast Generation</h3>
-                  <p className="text-muted-foreground">
-                    Get your generated images quickly with our optimized processing pipeline, complete with real-time progress tracking.
-                  </p>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
+     
 
       {/* Pricing Section */}
       <div id="pricing">
@@ -989,16 +1031,16 @@ export default function Home() {
                 Start Your Cultural Journey Today
               </h2>
               <p className="mx-auto max-w-2xl text-muted-foreground text-lg">
-                Discover the perfect Chinese name that represents your identity, personality, and cultural connection.
-                <br />
-                Join thousands who have found their authentic Chinese identity.
+                  Turn your wildest ideas into breathtaking visuals in seconds.
+                  <br />
+                  Join thousands of creators already generating stunning AI artwork.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
                 <button 
                   onClick={scrollToForm}
                   className="inline-flex items-center justify-center h-14 px-8 text-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors shadow-lg"
                 >
-                  {loading ? 'Loading...' : !user ? (hasTriedFree ? '🔒 Sign In for Unlimited Names' : '🎁 Get Your Free Chinese Name') : '🎯 Generate Chinese Name'}
+                  {loading ? 'Loading...' : !user ? (hasTriedFree ? '🔒 Sign In for Image Generator' : '🎁 Get Your  Image Generator') : '🎯 Generate Image'}
                 </button>
                 <a 
                   href="#chinese-name-pricing"
