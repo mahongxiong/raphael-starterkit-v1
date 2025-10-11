@@ -47,11 +47,11 @@ export default function TermsPage() {
               Terms of Service
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              These terms govern your use of our Chinese name generation service. 
+              These terms govern your use of our AI-powered image generation service. 
               By using our service, you agree to these terms and conditions.
             </p>
             <p className="text-sm text-muted-foreground">
-              <strong>Last updated:</strong> January 31, 2025
+              <strong>Last updated:</strong> March 26, 2024
             </p>
           </motion.div>
 
@@ -120,15 +120,15 @@ export default function TermsPage() {
               
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  Chinese Name Generator is an AI-powered platform that creates personalized Chinese names based on 
-                  your preferences, personality traits, and cultural considerations. Our service includes:
+                  Nano Banana is an AI-powered platform that creates high-quality images based on 
+                  your text descriptions, visual preferences, and creative vision. Our service includes:
                 </p>
                 
                 <ul className="space-y-2">
-                  <li>• <strong>Free Generation:</strong> Limited daily name generation for non-registered users</li>
-                  <li>• <strong>Premium Features:</strong> Unlimited generation, personalized matching, and name saving for registered users</li>
-                  <li>• <strong>Cultural Education:</strong> Detailed meanings, pronunciations, and cultural context for generated names</li>
-                  <li>• <strong>Personal Collections:</strong> Save and manage your favorite generated names</li>
+                  <li>• <strong>Free Generation:</strong> Limited daily image generation for non-registered users</li>
+                  <li>• <strong>Premium Features:</strong> Unlimited generation, advanced customization, and image saving for registered users</li>
+                  <li>• <strong>Creative Tools:</strong> Text-to-image and image-to-image generation with style control</li>
+                  <li>• <strong>Personal Gallery:</strong> Save and manage your favorite generated images</li>
                 </ul>
               </div>
             </div>
@@ -148,7 +148,7 @@ export default function TermsPage() {
                 <div>
                   <h4 className="font-semibold mb-3 text-green-700">Acceptable Use</h4>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Use the service for personal, educational, or cultural purposes</li>
+                    <li>• Use the service for creative, personal, or commercial purposes</li>
                     <li>• Provide accurate information when creating an account</li>
                     <li>• Respect intellectual property rights</li>
                     <li>• Keep your account credentials secure</li>
@@ -159,10 +159,10 @@ export default function TermsPage() {
                 <div>
                   <h4 className="font-semibold mb-3 text-red-700">Prohibited Activities</h4>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Using generated names for fraudulent purposes</li>
+                    <li>• Generating harmful, offensive, or illegal content</li>
                     <li>• Attempting to reverse-engineer our algorithms</li>
                     <li>• Sharing account credentials with others</li>
-                    <li>• Using automated tools to bulk-generate names</li>
+                    <li>• Using automated tools to bulk-generate images</li>
                     <li>• Violating any applicable laws or regulations</li>
                   </ul>
                 </div>
@@ -182,28 +182,28 @@ export default function TermsPage() {
               
               <div className="space-y-4 text-muted-foreground">
                 <div>
-                  <h4 className="font-semibold mb-3 text-foreground">Your Rights to Generated Names</h4>
+                  <h4 className="font-semibold mb-3 text-foreground">Your Rights to Generated Images</h4>
                   <p>
-                    You have the right to use any Chinese names generated through our service for personal purposes. 
-                    However, please note that traditional Chinese names are part of cultural heritage and cannot be 
-                    exclusively owned by any individual.
+                    You have the right to use any images generated through our service for personal and commercial purposes, 
+                    subject to our terms and conditions. However, please note that you are responsible for ensuring 
+                    your use of generated images complies with applicable laws and regulations.
                   </p>
                 </div>
                 
                 <div>
                   <h4 className="font-semibold mb-3 text-foreground">Our Intellectual Property</h4>
                   <p>
-                    The Chinese Name Generator platform, including our AI algorithms, website design, brand elements, 
+                    The Nano Banana platform, including our AI algorithms, website design, brand elements, 
                     and proprietary technology, remains our intellectual property. You may not copy, modify, or 
                     redistribute our platform or technology.
                   </p>
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold mb-3 text-foreground">Cultural Respect</h4>
+                  <h4 className="font-semibold mb-3 text-foreground">Content Guidelines</h4>
                   <p>
-                    We encourage respectful use of Chinese names and understanding of their cultural significance. 
-                    Generated names should be used with appreciation for Chinese culture and traditions.
+                    We encourage responsible and creative use of our image generation service. Generated images 
+                    should comply with our content guidelines and respect intellectual property rights.
                   </p>
                 </div>
               </div>
@@ -235,8 +235,8 @@ export default function TermsPage() {
                 <div>
                   <h4 className="font-semibold mb-2 text-foreground">AI-Generated Content</h4>
                   <p>
-                    Our Chinese names are generated by AI technology. While we strive for cultural accuracy and appropriateness, 
-                    we recommend consulting with native speakers or cultural experts for important use cases.
+                    Our images are generated by AI technology. While we strive for high quality and artistic merit, 
+                    results may vary and we recommend reviewing generated content for your specific needs.
                   </p>
                 </div>
                 
@@ -244,7 +244,7 @@ export default function TermsPage() {
                   <h4 className="font-semibold mb-2 text-foreground">No Warranties</h4>
                   <p>
                     Our service is provided "as is" without warranties of any kind. We do not guarantee the suitability 
-                    of generated names for any specific purpose or their acceptance in all cultural contexts.
+                    of generated images for any specific purpose or their acceptance in all contexts.
                   </p>
                 </div>
               </div>
@@ -267,8 +267,8 @@ export default function TermsPage() {
                   <ul className="space-y-2 text-muted-foreground">
                     <li>• Monthly and annual subscription options available</li>
                     <li>• Automatic renewal unless cancelled</li>
-                    <li>• Access to unlimited name generation</li>
-                    <li>• Premium features and personalization</li>
+                    <li>• Access to unlimited image generation</li>
+                    <li>• Advanced features and customization options</li>
                   </ul>
                 </div>
                 
@@ -278,7 +278,7 @@ export default function TermsPage() {
                     <li>• Cancel anytime through your account settings</li>
                     <li>• Refunds processed according to our refund policy</li>
                     <li>• No refunds for partially used subscription periods</li>
-                    <li>• Free trial cancellations take effect immediately</li>
+                    <li>• Unused credits expire with subscription cancellation</li>
                   </ul>
                 </div>
               </div>
@@ -318,10 +318,11 @@ export default function TermsPage() {
             transition={{ duration: 0.5, delay: 1.6 }}
             className="text-center bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-2xl p-8"
           >
-            <h3 className="text-2xl font-bold mb-4">Questions About These Terms?</h3>
+            <h3 className="text-2xl font-bold mb-4">Questions About Our Terms?</h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              If you have any questions about these Terms of Service or need clarification about your rights and responsibilities, 
-              please contact us. We're here to help ensure you understand and can comply with these terms.
+              If you have any questions about these Terms of Service or need clarification about your rights and responsibilities 
+              when using our image generation service, please contact us. We're here to help ensure you understand and can 
+              comply with these terms.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild variant="outline">
@@ -330,8 +331,8 @@ export default function TermsPage() {
                 </Link>
               </Button>
               <Button asChild>
-                <Link href="/">
-                  Start Using Service
+                <Link href="/product/image-generator">
+                  Start Creating
                 </Link>
               </Button>
             </div>

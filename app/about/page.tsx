@@ -40,17 +40,17 @@ export default function AboutPage() {
             className="text-center space-y-6"
           >
             <div className="inline-flex items-center rounded-full px-3 py-1 text-sm bg-primary/10 text-primary mb-4">
-              <span className="mr-2">🇨🇳</span>
-              Connecting Cultures Through Names
+              <span className="mr-2">🎨</span>
+              Transforming Ideas into Visual Art
             </div>
             <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Bridging Cultures with
+              Unleash Creativity with
               <br />
-              <span className="text-primary">Meaningful Chinese Names</span>
+              <span className="text-primary">Nano Banana AI</span>
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              We believe that a name is more than just words - it's a bridge between cultures, 
-              a reflection of identity, and a connection to the rich heritage of Chinese tradition.
+              We believe that every idea deserves to be visualized - our AI technology transforms your 
+              imagination into stunning images, bridging the gap between concept and creation.
             </p>
           </motion.div>
 
@@ -70,8 +70,9 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  To help people from all backgrounds discover meaningful Chinese names that reflect 
-                  their personality while honoring traditional Chinese naming conventions and cultural significance.
+                  To empower creators and innovators with cutting-edge AI technology that transforms 
+                  their ideas into stunning visual content, making professional-quality image generation 
+                  accessible to everyone.
                 </p>
               </CardContent>
             </Card>
@@ -85,8 +86,9 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  We've helped thousands of people worldwide discover their perfect Chinese names, 
-                  fostering cultural appreciation and personal connection to Chinese heritage.
+                  We've helped thousands of creators worldwide bring their visions to life, fostering 
+                  a vibrant community of artists, designers, and innovators who push the boundaries 
+                  of visual creativity.
                 </p>
               </CardContent>
             </Card>
@@ -100,8 +102,9 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  From students studying abroad to business professionals working in China, 
-                  our platform serves people seeking authentic cultural connection worldwide.
+                  From individual creators to major brands, our platform serves a global community 
+                  of users who rely on our technology to create compelling visual content that 
+                  captivates audiences worldwide.
                 </p>
               </CardContent>
             </Card>
@@ -121,21 +124,21 @@ export default function AboutPage() {
               </h3>
               <div className="space-y-6 text-muted-foreground">
                 <p>
-                  Chinese Name Generator was born from a simple observation: in our increasingly 
-                  connected world, many people desire meaningful connections to Chinese culture, 
-                  but finding an authentic Chinese name that truly represents their identity can be challenging.
+                  Nano Banana was born from a simple yet powerful vision: in today's visual-first world, 
+                  everyone should have the ability to create professional-quality images that bring their 
+                  ideas to life, regardless of their artistic background or technical expertise.
                 </p>
                 <p>
-                  Traditional Chinese naming is a beautiful art form that considers not just the sound 
-                  of a name, but its meaning, cultural significance, and how it reflects the person's 
-                  character and aspirations. Our advanced AI technology combines this ancient wisdom 
-                  with modern personalization to create names that are both culturally authentic and personally meaningful.
+                  Image generation is no longer just about technical capabilities - it's about empowering 
+                  creativity and enabling expression. Our advanced AI technology combines cutting-edge 
+                  machine learning with intuitive design to make image creation accessible, efficient, 
+                  and enjoyable for everyone.
                 </p>
                 <p>
-                  Whether you're a student preparing for study in China, a professional working with 
-                  Chinese colleagues, or simply someone fascinated by Chinese culture, we're here to 
-                  help you discover a name that truly represents who you are while honoring the rich 
-                  traditions of Chinese naming conventions.
+                  Whether you're a professional designer seeking to streamline your workflow, a content 
+                  creator looking to enhance your visual storytelling, or simply someone with amazing ideas 
+                  to share, we're here to help you transform your vision into stunning visual reality with 
+                  just a few clicks.
                 </p>
               </div>
             </div>
@@ -161,10 +164,10 @@ export default function AboutPage() {
                   <span className="text-primary font-bold">1</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Cultural Authenticity</h4>
+                  <h4 className="font-semibold mb-2">Creative Excellence</h4>
                   <p className="text-muted-foreground">
-                    Every name we generate respects traditional Chinese naming conventions 
-                    and cultural significance, ensuring authenticity and appropriateness.
+                    Every image we generate aims for the highest quality, leveraging advanced AI 
+                    to ensure stunning visuals that meet professional standards and exceed expectations.
                   </p>
                 </div>
               </div>
@@ -174,10 +177,10 @@ export default function AboutPage() {
                   <span className="text-primary font-bold">2</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Personal Meaning</h4>
+                  <h4 className="font-semibold mb-2">User-Centric Innovation</h4>
                   <p className="text-muted-foreground">
-                    We believe names should reflect who you are. Our AI considers your personality, 
-                    preferences, and individual characteristics to create truly personalized names.
+                    We believe technology should serve creativity. Our AI adapts to your style and 
+                    preferences, providing personalized results that align with your vision.
                   </p>
                 </div>
               </div>
@@ -187,10 +190,10 @@ export default function AboutPage() {
                   <span className="text-primary font-bold">3</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Educational Value</h4>
+                  <h4 className="font-semibold mb-2">Empowering Creation</h4>
                   <p className="text-muted-foreground">
-                    Beyond just providing names, we help users understand the meaning, 
-                    pronunciation, and cultural context of their Chinese names.
+                    Beyond just generating images, we provide tools and features that help users 
+                    understand and control the creative process, making AI art more accessible.
                   </p>
                 </div>
               </div>
@@ -200,10 +203,10 @@ export default function AboutPage() {
                   <span className="text-primary font-bold">4</span>
                 </div>
                 <div>
-                  <h4 className="font-semibold mb-2">Accessibility</h4>
+                  <h4 className="font-semibold mb-2">Universal Accessibility</h4>
                   <p className="text-muted-foreground">
-                    We make Chinese name generation accessible to everyone, regardless of their 
-                    background or familiarity with Chinese culture.
+                    We make professional-quality image generation accessible to everyone, regardless 
+                    of their technical expertise or artistic background.
                   </p>
                 </div>
               </div>
@@ -217,14 +220,14 @@ export default function AboutPage() {
             transition={{ duration: 0.5, delay: 0.8 }}
             className="text-center bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-2xl p-8 md:p-12"
           >
-            <h3 className="text-2xl font-bold mb-4">Ready to Discover Your Chinese Name?</h3>
+            <h3 className="text-2xl font-bold mb-4">Ready to Create Amazing Images?</h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              Join thousands of others who have found their perfect Chinese name. 
-              Start your cultural journey today with our AI-powered name generator.
+              Join thousands of creators who are already transforming their ideas into stunning visuals.
+              Start your creative journey today with our AI-powered image generator.
             </p>
             <Button asChild size="lg" className="font-medium">
               <Link href="/">
-                Get Started Now
+                Start Creating Now
               </Link>
             </Button>
           </motion.div>

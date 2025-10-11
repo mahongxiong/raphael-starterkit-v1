@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/use-user";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
 
 import NameGeneratorForm from "@/components/product/generator/name-generator-form";
 import ChineseNamePricing from "@/components/product/pricing/chinese-name-pricing";
@@ -189,6 +190,24 @@ export default function Home() {
   const [imgWebHook, setImgWebHook] = useState<string>("");
   const [imgShutProgress, setImgShutProgress] = useState<boolean>(false);
   
+  // FAQ展开/收起状态
+  const [expandedFaqs, setExpandedFaqs] = useState<{ [key: string]: boolean }>({
+    'what-is': false,
+    'how-works': false,
+    'better-than': false,
+    'commercial': false,
+    'edits': false,
+    'try-it': false
+  });
+  
+  // 切换FAQ展开/收起状态
+  const toggleFaq = (id: string) => {
+    setExpandedFaqs(prev => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+  
   // 进度条状态与计时器（新增）
   const [progress, setProgress] = useState(0);
   const progressIntervalRef = useRef<number | null>(null);
@@ -315,18 +334,18 @@ export default function Home() {
               className="space-y-6"
             >
               <div className="inline-flex items-center rounded-full px-3 py-1 text-sm bg-primary/10 text-primary mb-4">
-                <span className="mr-2">🇨🇳</span>
-                AI-Powered Chinese Name Generation
+                <span className="mr-2">🎨</span>
+                AI-Powered Image Generation
               </div>
               
               <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-                Discover Your Perfect
+                Create Amazing Images with
                 <br />
-                <span className="text-primary">Chinese Name</span>
+                <span className="text-primary">Nano Banana</span>
               </h1>
               
               <p className="mt-6 text-xl text-muted-foreground md:text-2xl max-w-3xl mx-auto">
-                Create your authentic Chinese identity with our advanced AI that understands cultural significance, personal meaning, and traditional naming conventions.
+                Transform your ideas into stunning visuals with our advanced AI image generation technology. From text descriptions to image transformations, bring your creativity to life.
               </p>
               
               <motion.div
@@ -339,15 +358,15 @@ export default function Home() {
                   onClick={scrollToForm}
                   className="inline-flex items-center justify-center h-14 px-8 text-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 rounded-md transition-colors shadow-lg"
                 >
-                  {loading ? 'Loading...' : !user ? (hasTriedFree ? '🔒 Sign In for More' : '🎁 Generate Free Name') : '🎯 Generate Name'}
+                  {loading ? 'Loading...' : !user ? '🎨 Start Creating' : '🎨 Generate Images'}
                 </button>
                 <button
                   onClick={() => {
-                    router.push('/product/random-generator');
+                    router.push('/product/image-generator');
                   }}
                   className="inline-flex items-center justify-center h-14 px-8 text-lg font-medium border border-border text-foreground hover:bg-muted rounded-md transition-colors"
                 >
-                  Random Name Generator
+                  Advanced Image Tools
                 </button>
               </motion.div>
               
@@ -359,15 +378,15 @@ export default function Home() {
               >
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  {loading ? 'Loading...' : !user ? '3 free names daily' : 'Unlimited generation'}
+                  Text to Image
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                  Instant generation
+                  Image to Image
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                  Cultural accuracy
+                  High Quality Output
                 </div>
               </motion.div>
             </motion.div>
@@ -387,14 +406,14 @@ export default function Home() {
             >
               <div className="text-center space-y-4">
                 <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                  Create Your Chinese Name
-                </h2>
-                <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                  Tell us about yourself and let our AI create a meaningful Chinese name that reflects your personality and cultural significance.
-                </p>
-              </div>
+                Create Your Images
+              </h2>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Use our powerful AI to transform your text descriptions into stunning images or enhance existing images with creative transformations.
+              </p>
+            </div>
 
-              <div id="name-generator-form" data-name-generator-form>
+            <div id="image-generator-form" data-name-generator-form>
                 {/* 替换为 Image Editor 内容 */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                   {/* 左侧：编辑器输入区域 */}
@@ -693,6 +712,177 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="py-20 bg-gradient-to-b from-muted/20 to-muted/10">
+        <div className="container px-4 md:px-6">
+          <div className="mx-auto max-w-4xl space-y-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center space-y-4"
+            >
+              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Find answers to common questions about Nano Banana AI image generation.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="space-y-4"
+            >
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <button 
+                  onClick={() => toggleFaq('what-is')}
+                  className="w-full px-6 py-4 text-left hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">What is Nano Banana?</h3>
+                    <svg
+                      className={`w-6 h-6 transform transition-transform ${expandedFaqs['what-is'] ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div className={`mt-2 text-muted-foreground overflow-hidden transition-all duration-300 ${expandedFaqs['what-is'] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    Nano Banana is an advanced AI image generation platform that transforms your text descriptions into stunning visuals. 
+                    Our technology combines state-of-the-art AI models with an intuitive interface to help you create amazing images quickly and easily.
+                  </div>
+                </button>
+              </div>
+
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <button 
+                  onClick={() => toggleFaq('how-works')}
+                  className="w-full px-6 py-4 text-left hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">How does it work?</h3>
+                    <svg
+                      className={`w-6 h-6 transform transition-transform ${expandedFaqs['how-works'] ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div className={`mt-2 text-muted-foreground overflow-hidden transition-all duration-300 ${expandedFaqs['how-works'] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    Simply enter a text description of the image you want to create, and our AI will generate it for you. 
+                    You can also use our image-to-image feature to transform existing images with new styles or modifications. 
+                    Our system processes your request in real-time, with progress tracking and quick delivery of results.
+                  </div>
+                </button>
+              </div>
+
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <button 
+                  onClick={() => toggleFaq('better-than')}
+                  className="w-full px-6 py-4 text-left hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">How is it better than Flux Kontext?</h3>
+                    <svg
+                      className={`w-6 h-6 transform transition-transform ${expandedFaqs['better-than'] ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div className={`mt-2 text-muted-foreground overflow-hidden transition-all duration-300 ${expandedFaqs['better-than'] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    Nano Banana offers superior image quality, faster generation times, and a more user-friendly interface. 
+                    Our platform also provides unique features like real-time progress tracking, advanced style controls, 
+                    and flexible image manipulation options that set us apart from other services.
+                  </div>
+                </button>
+              </div>
+
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <button 
+                  onClick={() => toggleFaq('commercial')}
+                  className="w-full px-6 py-4 text-left hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Can I use it for commercial projects?</h3>
+                    <svg
+                      className={`w-6 h-6 transform transition-transform ${expandedFaqs['commercial'] ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div className={`mt-2 text-muted-foreground overflow-hidden transition-all duration-300 ${expandedFaqs['commercial'] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    Yes! With our premium subscription, you get full commercial usage rights for all generated images. 
+                    We provide clear licensing terms and high-resolution outputs suitable for professional use. 
+                    Check our pricing page for more details on commercial licenses and usage rights.
+                  </div>
+                </button>
+              </div>
+
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <button 
+                  onClick={() => toggleFaq('edits')}
+                  className="w-full px-6 py-4 text-left hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">What types of edits can it handle?</h3>
+                    <svg
+                      className={`w-6 h-6 transform transition-transform ${expandedFaqs['edits'] ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div className={`mt-2 text-muted-foreground overflow-hidden transition-all duration-300 ${expandedFaqs['edits'] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    Our platform supports a wide range of image manipulations, including style transfer, background changes, 
+                    object addition or removal, color adjustments, and artistic effects. You can also combine multiple 
+                    editing techniques to achieve your desired results.
+                  </div>
+                </button>
+              </div>
+
+              <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+                <button 
+                  onClick={() => toggleFaq('try-it')}
+                  className="w-full px-6 py-4 text-left hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold">Where can I try Nano Banana?</h3>
+                    <svg
+                      className={`w-6 h-6 transform transition-transform ${expandedFaqs['try-it'] ? 'rotate-180' : ''}`}
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                  <div className={`mt-2 text-muted-foreground overflow-hidden transition-all duration-300 ${expandedFaqs['try-it'] ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                    You can start using Nano Banana right now! Try our free tier with 5 daily generations, 
+                    or sign up for a premium account to unlock unlimited generations and advanced features. 
+                    Just scroll up to the generator section and start creating.
+                  </div>
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section id="features" className="py-20 bg-muted/20">
         <div className="container px-4 md:px-6">
@@ -704,11 +894,19 @@ export default function Home() {
               className="space-y-4"
             >
               <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                Why Choose Our Chinese Name Generator?
+                Ready to Create Amazing Images?
               </h2>
               <p className="mx-auto max-w-3xl text-muted-foreground text-lg">
-                Advanced AI technology combined with deep cultural understanding to create meaningful Chinese names that truly represent you.
+                Start your creative journey with Nano Banana's AI image generation today.
               </p>
+              <div className="mt-10 flex items-center justify-center gap-x-6">
+                <Button asChild>
+                  <Link href="#image-generator-form">Get Started</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href="/terms">Learn more</Link>
+                </Button>
+              </div>
             </motion.div>
             
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -719,13 +917,17 @@ export default function Home() {
                 className="rounded-2xl bg-background p-8 shadow-sm border border-border"
               >
                 <div className="space-y-4">
-                  <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <span className="text-2xl">🤖</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground">AI-Powered Intelligence</h3>
-                  <p className="text-muted-foreground">
-                    Our advanced AI understands your personality traits, preferences, and cultural nuances to create names that truly represent you.
-                  </p>
+                  <h3 className="text-xl font-bold text-foreground">Free</h3>
+                  <p className="text-muted-foreground">Perfect for trying out our service.</p>
+                  <ul className="space-y-2 text-muted-foreground">
+                    <li>✓ 5 image generations per day</li>
+                    <li>✓ Basic image styles</li>
+                    <li>✓ Standard resolution</li>
+                  </ul>
+                  <p className="text-3xl font-bold text-foreground">$0</p>
+                  <Button className="w-full" variant="outline">
+                    Get Started
+                  </Button>
                 </div>
               </motion.div>
               
@@ -737,11 +939,11 @@ export default function Home() {
               >
                 <div className="space-y-4">
                   <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                    <span className="text-2xl">🏮</span>
+                    <span className="text-2xl">🖼️</span>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Cultural Authenticity</h3>
+                  <h3 className="text-xl font-bold text-foreground">Image Enhancement</h3>
                   <p className="text-muted-foreground">
-                    Each name is crafted with deep understanding of Chinese naming traditions, character meanings, and cultural significance.
+                    Take your existing images to the next level with our image-to-image transformation technology and creative style transfer.
                   </p>
                 </div>
               </motion.div>
@@ -756,9 +958,9 @@ export default function Home() {
                   <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                     <span className="text-2xl">⚡</span>
                   </div>
-                  <h3 className="text-xl font-bold text-foreground">Instant Generation</h3>
+                  <h3 className="text-xl font-bold text-foreground">Fast Generation</h3>
                   <p className="text-muted-foreground">
-                    Get your personalized Chinese name in seconds, complete with detailed meanings, pronunciation guides, and cultural context.
+                    Get your generated images quickly with our optimized processing pipeline, complete with real-time progress tracking.
                   </p>
                 </div>
               </motion.div>

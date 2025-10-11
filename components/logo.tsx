@@ -17,7 +17,7 @@ export function Logo() {
         />
       </div>
       <span className="font-bold text-lg bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-        ChineseName.club
+        Nano Banana
       </span>
     </Link>
   );
