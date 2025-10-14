@@ -36,19 +36,6 @@ export function Footer() {
   if (isDashboard) {
     return (
       <footer className="border-t py-6 md:py-0">
-        <div className="container flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row md:py-0">
-          <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-            <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-              Built by{" "}
-              <Link
-                href="https://Raphael.app"
-                className="font-medium underline underline-offset-4"
-              >
-                Raphael Starter
-              </Link>
-            </p>
-          </div>
-        </div>
       </footer>
     );
   }
@@ -82,15 +69,6 @@ export function Footer() {
               </div>
             ))}
           </div>
-        </div>
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t pt-8 md:flex-row">
-          <p className="text-center text-sm leading-loose text-muted-foreground md:text-left">
-            Built by{" "}
-            <Link href="#" className="font-medium underline underline-offset-4">
-              Raphael Starter
-            </Link>
-            .
-          </p>
         </div>
       </div>
     </footer>

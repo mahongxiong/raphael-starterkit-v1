@@ -50,9 +50,6 @@ export default function TermsPage() {
               These terms govern your use of our AI-powered image generation service. 
               By using our service, you agree to these terms and conditions.
             </p>
-            <p className="text-sm text-muted-foreground">
-              <strong>Last updated:</strong> March 26, 2024
-            </p>
           </motion.div>
 
           {/* Key Points */}
@@ -71,7 +68,7 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm">
-                  Use our service to generate Chinese names, save your favorites, and share your generated names with others.
+                  Use our service to generate images, save your favorites, and share your generated images with others.
                 </p>
               </CardContent>
             </Card>
@@ -85,7 +82,7 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm">
-                  Misuse our service, violate others' rights, or use generated names for illegal or harmful purposes.
+                  Misuse our service, violate others' rights, or use generated images for illegal or harmful purposes.
                 </p>
               </CardContent>
             </Card>
@@ -99,7 +96,8 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm">
-                  Provide reliable service, protect your privacy, and maintain the quality of our name generation.
+                  Provide reliable service, protect your privacy, and maintain the quality of our 
+                  image generation.
                 </p>
               </CardContent>
             </Card>

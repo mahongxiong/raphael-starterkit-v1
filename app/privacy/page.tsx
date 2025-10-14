@@ -48,10 +48,10 @@ export default function PrivacyPage() {
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               We are committed to protecting your privacy and being transparent about how we collect, 
-              use, and protect your personal information when you use our Chinese name generation service.
+              use, and protect your personal information when you use our AI image generation service.
             </p>
             <p className="text-sm text-muted-foreground">
-              <strong>Last updated:</strong> January 31, 2025
+              <strong>Last updated:</strong> March 15, 2024
             </p>
           </motion.div>
 
@@ -71,7 +71,7 @@ export default function PrivacyPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm">
-                  We clearly explain what data we collect and how we use it to provide you with the best Chinese name generation experience.
+                  We clearly explain what data we collect and how we use it to provide you with the best AI image generation experience.
                 </p>
               </CardContent>
             </Card>
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm">
-                  Your personal information is protected with industry-standard security measures and encryption protocols.
+                  Your personal information and generated images are protected with industry-standard security measures and encryption protocols.
                 </p>
               </CardContent>
             </Card>
@@ -99,7 +99,7 @@ export default function PrivacyPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-sm">
-                  You have full control over your data, including the ability to access, update, or delete your information.
+                  You have full control over your data and generated content, including the ability to access, update, or delete your information.
                 </p>
               </CardContent>
             </Card>
@@ -122,17 +122,17 @@ export default function PrivacyPage() {
                 <div>
                   <h4 className="font-semibold mb-3">Information You Provide</h4>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• <strong>Personal Details:</strong> English name, gender, birth year (optional)</li>
-                    <li>• <strong>Preferences:</strong> Personality traits and name preferences you share</li>
+                    <li>• <strong>Content Data:</strong> Text prompts, uploaded images, and generated images</li>
+                    <li>• <strong>Preferences:</strong> Style preferences and generation settings</li>
                     <li>• <strong>Account Information:</strong> Email address when you create an account</li>
-                    <li>• <strong>Generated Names:</strong> Chinese names you generate and save to your profile</li>
+                    <li>• <strong>Generated Content:</strong> Images you create and save to your profile</li>
                   </ul>
                 </div>
                 
                 <div>
                   <h4 className="font-semibold mb-3">Information We Collect Automatically</h4>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• <strong>Usage Data:</strong> How you interact with our service</li>
+                    <li>• <strong>Usage Data:</strong> How you interact with our image generation service</li>
                     <li>• <strong>Device Information:</strong> Browser type, operating system, IP address</li>
                     <li>• <strong>Cookies:</strong> To improve your experience and remember your preferences</li>
                   </ul>
@@ -155,8 +155,8 @@ export default function PrivacyPage() {
                 <div>
                   <h4 className="font-semibold mb-3">Service Provision</h4>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Generate personalized Chinese names</li>
-                    <li>• Save your generated names and preferences</li>
+                    <li>• Generate AI-powered images</li>
+                    <li>• Save your generated images and preferences</li>
                     <li>• Provide customer support</li>
                     <li>• Process payments for premium features</li>
                   </ul>
@@ -165,10 +165,10 @@ export default function PrivacyPage() {
                 <div>
                   <h4 className="font-semibold mb-3">Service Improvement</h4>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Analyze service usage to improve functionality</li>
-                    <li>• Develop new features and capabilities</li>
-                    <li>• Ensure service security and prevent fraud</li>
-                    <li>• Send service-related communications</li>
+                    <li>• Enhance image generation quality</li>
+                    <li>• Develop new creative features</li>
+                    <li>• Ensure content safety and prevent misuse</li>
+                    <li>• Send service-related updates</li>
                   </ul>
                 </div>
               </div>
@@ -190,14 +190,14 @@ export default function PrivacyPage() {
               
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  <strong>We do not sell your personal information.</strong> We may share your information only in these limited circumstances:
+                  <strong>We do not sell your personal information or generated content.</strong> We may share your information only in these limited circumstances:
                 </p>
                 
                 <ul className="space-y-2">
-                  <li>• <strong>Service Providers:</strong> Trusted third parties who help us operate our service (payment processing, hosting, analytics)</li>
+                  <li>• <strong>Service Providers:</strong> Trusted third parties who help us operate our service (AI processing, hosting, analytics)</li>
                   <li>• <strong>Legal Requirements:</strong> When required by law or to protect our rights and safety</li>
                   <li>• <strong>Business Transfers:</strong> In the event of a merger, acquisition, or sale of assets</li>
-                  <li>• <strong>With Your Consent:</strong> When you explicitly agree to share information</li>
+                  <li>• <strong>With Your Consent:</strong> When you explicitly agree to share your generated content</li>
                 </ul>
               </div>
             </div>
@@ -215,21 +215,21 @@ export default function PrivacyPage() {
               
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <h4 className="font-semibold mb-3">Access and Control</h4>
+                  <h4 className="font-semibold mb-3">Content Control</h4>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Access your personal information</li>
-                    <li>• Update or correct your data</li>
-                    <li>• Delete your account and data</li>
-                    <li>• Download your data</li>
+                    <li>• Access your generated images</li>
+                    <li>• Manage your image gallery</li>
+                    <li>• Delete your account and content</li>
+                    <li>• Download your images</li>
                   </ul>
                 </div>
                 
                 <div>
-                  <h4 className="font-semibold mb-3">Communication Preferences</h4>
+                  <h4 className="font-semibold mb-3">Privacy Settings</h4>
                   <ul className="space-y-2 text-muted-foreground">
-                    <li>• Opt out of marketing communications</li>
+                    <li>• Control image visibility</li>
                     <li>• Manage cookie preferences</li>
-                    <li>• Control data processing</li>
+                    <li>• Set content sharing options</li>
                     <li>• Request data portability</li>
                   </ul>
                 </div>
@@ -249,7 +249,7 @@ export default function PrivacyPage() {
               
               <div className="space-y-4 text-muted-foreground">
                 <p>
-                  We implement appropriate technical and organizational measures to protect your personal information against 
+                  We implement robust security measures to protect your personal information and generated content against 
                   unauthorized access, alteration, disclosure, or destruction.
                 </p>
                 
@@ -257,20 +257,20 @@ export default function PrivacyPage() {
                   <div>
                     <h4 className="font-semibold mb-2 text-foreground">Security Measures</h4>
                     <ul className="space-y-1">
-                      <li>• Encryption in transit and at rest</li>
-                      <li>• Regular security audits</li>
-                      <li>• Access controls and monitoring</li>
-                      <li>• Secure data centers</li>
+                      <li>• End-to-end encryption</li>
+                      <li>• Content safety monitoring</li>
+                      <li>• Access controls and logging</li>
+                      <li>• Secure cloud storage</li>
                     </ul>
                   </div>
                   
                   <div>
                     <h4 className="font-semibold mb-2 text-foreground">Data Retention</h4>
                     <ul className="space-y-1">
-                      <li>• Account data: Until account deletion</li>
-                      <li>• Generated names: Until you delete them</li>
-                      <li>• Usage logs: Up to 2 years</li>
-                      <li>• Marketing data: Until opt-out</li>
+                      <li>• Account data: Until deletion</li>
+                      <li>• Generated images: Until removed</li>
+                      <li>• Usage logs: Up to 1 year</li>
+                      <li>• Temporary files: 24 hours</li>
                     </ul>
                   </div>
                 </div>
@@ -287,8 +287,8 @@ export default function PrivacyPage() {
           >
             <h3 className="text-2xl font-bold mb-4">Questions About Privacy?</h3>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-              If you have any questions about this Privacy Policy or our data practices, 
-              please don't hesitate to contact us. We're here to help and ensure your privacy is protected.
+              If you have any questions about this Privacy Policy or how we handle your data and generated content, 
+              please don't hesitate to contact us. We're here to help ensure your privacy and creative work are protected.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild variant="outline">
