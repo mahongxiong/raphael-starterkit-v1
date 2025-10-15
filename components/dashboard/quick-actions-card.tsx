@@ -10,8 +10,8 @@ type QuickActionsCardProps = {
 };
 
 const DEFAULT_ACTIONS: QuickAction[] = [
-  { label: "View Plans", href: "#pricing" },
-  { label: "Get Support", href: "#support" },
+  { label: "View Plans", href: "/#pricing" },
+  { label: "Image Generation", href: "/product/image-generator" },
 ];
 
 export function QuickActionsCard({

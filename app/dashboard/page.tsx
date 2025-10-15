@@ -51,7 +51,7 @@ export default async function DashboardPage() {
           <span className="block sm:inline mt-1 sm:mt-0">{user.email}</span>
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground">
-          Manage your Chinese names, view your generation history, and track your usage.
+          Manage your images, view your generation history, and track your usage.
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export default async function DashboardPage() {
 
       {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <MyNamesCard />
+        {/* <MyNamesCard /> */}
         <GenerationHistoryCard />
       </div>
 
