@@ -136,21 +136,6 @@ export function GenerationHistoryCard() {
                   className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="group relative w-12 h-12 rounded-lg bg-muted overflow-hidden ring-1 ring-border">
-                      {(() => {
-                        return (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={rec.output_image_url ?? undefined}
-                            alt={rec.prompt}
-                            loading="lazy"
-                            decoding="async"
-                            draggable={false}
-                            className="w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
-                          />
-                        );
-                      })()}
-                    </div>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-sm line-clamp-1" title={rec.prompt}>
