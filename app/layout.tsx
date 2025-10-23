@@ -12,11 +12,11 @@ const baseUrl = process.env.BASE_URL
 
 export const metadata = {
   metadataBase: new URL(baseUrl),
-  title: "AI Image Generator - Create Beautiful Images with AI",
+  title: "AI Image Generator - Create Beautiful Images with Nona Banana,Gemini3.0",
   description: "Transform your ideas into stunning images with our AI-powered image generator. Create beautiful, unique visuals for any purpose.",
   keywords: "AI image generator, image generation, AI art, digital art, creative tools, visual content",
   openGraph: {
-    title: "AI Image Generator - Create Beautiful Images with AI",
+    title: "AI Image Generator - Create Beautiful Images with AI,Nona Banana generate wonderful Image",
     description: "Transform your ideas into stunning images with our AI-powered image generator. Create beautiful, unique visuals for any purpose.",
     type: "website",
     url: baseUrl,
