@@ -44,13 +44,11 @@ export default function AboutPage() {
               Transforming Ideas into Visual Art
             </div>
             <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Unleash Creativity with
-              <br />
-              <span className="text-primary">Nano Banana AI</span>
+              About Our AI Image Generator
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              We believe that every idea deserves to be visualized - our AI technology transforms your 
-              imagination into stunning images, bridging the gap between concept and creation.
+              Transforming ideas into stunning visual experiences. Our AI technology empowers creators, businesses, 
+              and individuals to bring their ideas to life through professional-quality images.
             </p>
           </motion.div>
 

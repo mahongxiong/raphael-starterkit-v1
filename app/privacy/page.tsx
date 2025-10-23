@@ -22,7 +22,7 @@ export default function PrivacyPage() {
             <div>
               <h1 className="text-xl font-bold">Privacy Policy</h1>
               <p className="text-sm text-muted-foreground">
-                How we protect and handle your data
+                How we protect your data and generated images
               </p>
             </div>
           </div>
@@ -41,14 +41,14 @@ export default function PrivacyPage() {
           >
             <div className="inline-flex items-center rounded-full px-3 py-1 text-sm bg-primary/10 text-primary mb-4">
               <Shield className="mr-2 h-4 w-4" />
-              Your Privacy Matters
+              Data Protection
             </div>
             <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Privacy Policy
+              Image Generation Privacy
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              We are committed to protecting your privacy and being transparent about how we collect, 
-              use, and protect your personal information when you use our AI image generation service.
+              Your privacy and intellectual property are important to us. Learn how we collect, use, and protect your data
+              when you use our AI image generation platform.
             </p>
             <p className="text-sm text-muted-foreground">
               <strong>Last updated:</strong> March 15, 2024

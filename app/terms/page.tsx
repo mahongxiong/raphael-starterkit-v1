@@ -22,7 +22,7 @@ export default function TermsPage() {
             <div>
               <h1 className="text-xl font-bold">Terms of Service</h1>
               <p className="text-sm text-muted-foreground">
-                Terms and conditions for using our service
+                Terms and conditions for using our AI image generation service
               </p>
             </div>
           </div>
@@ -44,10 +44,10 @@ export default function TermsPage() {
               Legal Terms
             </div>
             <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-              Terms of Service
+              AI Image Generation Terms
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              These terms govern your use of our AI-powered image generation service. 
+              These terms govern your use of our AI-powered image generation platform. 
               By using our service, you agree to these terms and conditions.
             </p>
           </motion.div>

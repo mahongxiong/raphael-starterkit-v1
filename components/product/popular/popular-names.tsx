@@ -36,6 +36,11 @@ const showcaseImages: ShowcaseImage[] = [
     title: "AI Generated moons in the sky",
     description: "A hyper-realistic sci-fi landscape of a vibrant alien planet with multiple moons in the sky. The ground is covered in bioluminescent flora, and a sleek, futuristic starship is landed in the foreground.",
     imagePath: "/images/AI Generated real city.png"
+  },
+  {
+    title: "AI Generated fantasy person",
+    description: "Transform this person into a detailed fantasy RPG figurine with elaborate costume, magical accessories, and heroic pose. Place it on a mystical base with glowing runes, surrounded by miniature fantasy landscape elements like crystals, tiny trees, and magical effects.",
+    imagePath: "/images/AI Generated fantasy person.png"
   }
 ];
 

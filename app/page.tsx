@@ -339,13 +339,13 @@ export default function Home() {
               </div>
               
               <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-                Create Amazing Images with
+                Transform Your Ideas
                 <br />
-                <span className="text-primary">Nano Banana</span>
+                Into <span className="text-primary">Beautiful Images</span>
               </h1>
               
               <p className="mt-6 text-xl text-muted-foreground md:text-2xl max-w-3xl mx-auto">
-                Transform your ideas into stunning visuals with our advanced AI image generation technology. From text descriptions to image transformations, bring your creativity to life.
+                Create stunning visuals with our advanced AI technology. From simple text descriptions to image transformations, unleash your creativity with professional-quality results.
               </p>
               
               <motion.div
@@ -406,10 +406,10 @@ export default function Home() {
             >
               <div className="text-center space-y-4">
                 <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                Create Your Images
+                Create Professional Images
               </h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-                Use our powerful AI to transform your text descriptions into stunning images or enhance existing images with creative transformations.
+                Generate high-quality visuals from text descriptions or enhance your existing images with our advanced AI technology.
               </p>
             </div>
 
@@ -710,10 +710,10 @@ export default function Home() {
           <div className="mx-auto max-w-6xl space-y-12">
             <div className="space-y-4 text-center">
               <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                Why Choose Nano Banana?
+                Advanced AI Image Generation
               </h2>
               <p className="mx-auto max-w-[700px] text-muted-foreground text-lg">
-                Start your creative journey with Nano Banana's AI image generation today.
+                Experience the power of cutting-edge AI technology for your creative projects.
               </p>
             </div>
 

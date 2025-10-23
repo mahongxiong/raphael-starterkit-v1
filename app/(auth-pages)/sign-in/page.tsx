@@ -42,11 +42,11 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
       <div className="flex flex-col space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
         <p className="text-sm text-muted-foreground">
-          Enter your email to sign in to your account
+          Enter your google to sign in to your account
         </p>
       </div>
       <div className="grid gap-6">
-        <form className="grid gap-4">
+        {/* <form className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -87,8 +87,8 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
             Sign in
           </SubmitButton>
           <FormMessage message={searchParams} />
-        </form>
-        <div className="relative">
+        </form> */}
+        {/* <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
@@ -97,7 +97,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
               Or continue with
             </span>
           </div>
-        </div>
+        </div> */}
         <form action={signInWithGoogle}>
           <Button
             type="submit"
@@ -125,7 +125,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
             Sign in with Google
           </Button>
         </form>
-        <div className="text-sm text-muted-foreground text-center">
+        {/* <div className="text-sm text-muted-foreground text-center">
           Don't have an account?{" "}
           <Link
             href="/sign-up"
@@ -133,7 +133,7 @@ export default async function Login(props: { searchParams: Promise<Message> }) {
           >
             Sign up
           </Link>
-        </div>
+        </div> */}
       </div>
     </>
   );
